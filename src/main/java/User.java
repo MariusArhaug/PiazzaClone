@@ -1,8 +1,10 @@
+
+
 public class User {
 
-    private String name;
-    private String email;
-    private String password;
+    private final String name;
+    private final String email;
+    private final String password;
     private boolean isInstructor = false;
     private int postsCreated = 0;
     private int postsViewed = 0;
@@ -14,6 +16,21 @@ public class User {
         this.password = password;
         this.isInstructor = isInstructor;
     }
+
+    public String getName() {
+        return this.name;
+    }
+    public String getEmail() {
+        return this.email;
+    }
+    public String getPassword() {
+        return this.password;
+    }
+
+    public boolean isInstructor() {
+        return this.isInstructor;
+    }
+
 
     public void method() {
         System.out.println("do something");
