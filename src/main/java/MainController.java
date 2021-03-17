@@ -1,3 +1,4 @@
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class MainController {
@@ -6,12 +7,13 @@ public class MainController {
     private User user;
     private Login login = new Login();
     private Register register = new Register();
+    private CreatePost createPost = new CreatePost();
 
     public MainController() {
         this.connection = new DBConnect();
         this.connection.connect();
     }
-    private void init() {
+    private User init() {
         Scanner in = new Scanner(System.in);
         System.out.println("It appears that you're not logged in, please log in.");
         System.out.println("----------Login--------");
@@ -36,18 +38,46 @@ public class MainController {
                 if (isRegistered) {
                     break;
                 }
+                System.out.println("An error has occurred! Try again: ");
             }
         }
-        this.user = user;
-        System.out.println("View courses: ");
+        return user;
+    }
+
+    private void chooseCourse() {
+        Scanner in = new Scanner(System.in);
+        HashMap<Integer, String> courses = this.createPost.viewCourses();
+        System.out.println("Courses: ");
+        System.out.println(courses.values().toString());
+        System.out.println("Select a course: " + courses.keySet().toString());
+        String courseID = in.nextLine();
+        Course course = createPost.selectCourse(courseID);
+        System.out.println("Welcome to: " + course);
+        while (true) {
+            System.out.println("Do you want to post? (y/n)");
+            if (in.nextLine().equalsIgnoreCase("y")) {
+                //create post
+            }
+            System.out.println("Do you want to comment on a post? (y/n)");
+            if (in.nextLine().equalsIgnoreCase("y")) {
+                //find post then comment.
+            }
+            System.out.println("Do you want to log out? (y/n)");
+            if (in.nextLine().equalsIgnoreCase("y")) {
+                break;
+            }
+        }
     }
 
     public void startProgram() {
         System.out.println("--------Welcome to Piazza--------");
         if (this.user == null) {
-            this.init();
+            this.user = this.init();
         }
+        this.chooseCourse();
+
     }
+
 
     public static void main(String[] args) {
         MainController controller = new MainController();
