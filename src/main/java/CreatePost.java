@@ -103,17 +103,46 @@ public class CreatePost extends DBConnect {
         return null;
     }
 
+    /*public void viewPosts() {
+        try {
+            String SQLQuery = "SELECT * " +
+                    "FROM posts";
+            this.regStatment = conn.prepareStatement(SQLQuery);
+            return this.translateFolder(this.regStatment.executeQuery());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
+    private HashMap<Integer, String> translatePosts(ResultSet rs) {
+        HashMap<Integer, String> posts = new HashMap<>();
+        try {
+            while (rs.next()) {
+                Integer folderID = rs.getInt("folderID");
+                String folderName = rs.getString("name");
+                folders.put(folderID, folderName);
+            }
+            return folders;
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }*/
 
-
-    public void sendPost() {
+    public void newPost(int courseID, int userID) {
         Scanner in = new Scanner(System.in);
         System.out.println("-------Make new post------");
 
         System.out.println("Post type: (Question, Note, Poll) ");
         String type = in.nextLine().toLowerCase();
-        System.out.println("Select folder: (Question, Note, Poll) ");
-        String folderName = in.nextLine().toLowerCase();
+        System.out.println("Folders:");
+        HashMap<Integer, String> courseFolders = this.viewCourseFolders(courseID);
+        System.out.println(courseFolders.values());
+        System.out.println("Select a folder: " + courseFolders.keySet());
+        String folderID = in.nextLine();
+        String folderName = courseFolders.get(Integer.parseInt(folderID));
+
         System.out.println("Summary: ");
         String summary = in.nextLine();
         System.out.println("Your question:  ");
@@ -124,13 +153,15 @@ public class CreatePost extends DBConnect {
         this.startPost();
         try {
             this.regStatment.setString(1, newPost.getType());
+            this.regStatment.setString(2, newPost.getSummary());
+            this.regStatment.setString(3, newPost.getContent());
+            this.regStatment.setBoolean(4, newPost.isAllowAnonymous());
+            this.regStatment.setInt(5, courseID);
+            this.regStatment.setInt(6, userID);
+            this.regStatment.execute();
         } catch(Exception e) {
             System.out.println();
         }
-
-
-        startPost();
-
     }
 
 }

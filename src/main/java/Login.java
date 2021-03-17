@@ -47,13 +47,15 @@ public class Login extends DBConnect {
            e.printStackTrace();
         }
         return null;
-        //String hashedPassword = Register.hashPassword(in.nextLine());
-
     }
-    public static void main(String[] args) {
-        Login login = new Login();
-        //User loggedInUser = login.loginUser();
-        //System.out.println("Success! Logged in as: " + loggedInUser);
+    public User loginUser() {
+        Scanner in = new Scanner(System.in);
+        System.out.println("It appears that you're not logged in, please log in.");
+        System.out.println("----------Login--------");
+        System.out.println("Email: ");
+        String email = in.nextLine();
+        System.out.println("Password: ");
+        String password = in.nextLine();
+        return this.getUser(email, password);
     }
-
 }

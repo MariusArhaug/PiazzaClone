@@ -1,13 +1,14 @@
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
+import java.util.Scanner;
 
 
 public class Register extends DBConnect{
     private PreparedStatement regStatement;
 
     private User user = null;
-    private Login login = new Login();
+    private final Login login = new Login();
 
     public Register() {
         super.connect();
@@ -46,12 +47,12 @@ public class Register extends DBConnect{
 
             this.regStatement = conn.prepareStatement(SQL);
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
 
-    public boolean registerUser(User user) {
+    public boolean insertUser(User user) {
         User existingUser = this.login.getUser(user.getEmail(), user.getPassword());
         this.user = user;
 
@@ -65,7 +66,7 @@ public class Register extends DBConnect{
             this.regStatement.setString(1, this.user.getName());
             this.regStatement.setString(2, this.user.getEmail());
             this.regStatement.setString(3, this.user.getPassword());
-            this.regStatement.setInt(4, this.user.isInstructor() ? 1 : 0); //Need to convert into tiny int
+            this.regStatement.setBoolean(4, this.user.isInstructor()); //Need to convert into tiny int
             this.regStatement.execute();
             return true;
         } catch (Exception e) {
@@ -74,12 +75,24 @@ public class Register extends DBConnect{
         return false;
     }
 
+    public User registerUser() {
+        Scanner in = new Scanner(System.in);
+        System.out.println("Name: ");
+        String name = in.nextLine();
+        System.out.println("Email: ");
+        String email = in.nextLine();
+        System.out.println("Password: ");
+        String password = in.nextLine();
+        System.out.println("Instructor: (y/n)");
+        boolean isInstructor = in.nextLine().equalsIgnoreCase("y");
+        return new User(name, email, password, isInstructor);
+    }
 
 
     public static void main(String[] args) {
-        User marius = new User("Marius", "mariuhar@stud.ntnu.no", "124", true);
-        Register register = new Register();
-        register.registerUser(marius);
+        /* User marius = new User("Marius", "mariuhar@stud.ntnu.no", "124", true);
+        // Register register = new Register();
+        register.registerUser(marius);*/
     }
 
 }

@@ -30,6 +30,9 @@ public class User {
         this.postsLiked = postCounts[2];
     }
 
+    public int getUserID() {
+        return userID;
+    }
 
     public String getName() {
         return this.name;

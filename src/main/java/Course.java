@@ -11,6 +11,10 @@ public class Course {
         this.allowAnonymous = allowAnonymous;
     }
 
+    public int getCourseID() {
+        return courseID;
+    }
+
     public String toString() {
         return this.name + ": " + this.term + ", Allow anonymous? " + (this.allowAnonymous ?  "yes" : "no");
     }

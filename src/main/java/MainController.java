@@ -8,37 +8,23 @@ public class MainController {
     private Login login = new Login();
     private Register register = new Register();
     private CreatePost createPost = new CreatePost();
+    private Course course = null;
 
     public MainController() {
         this.connection = new DBConnect();
         this.connection.connect();
     }
-    private User init() {
-        Scanner in = new Scanner(System.in);
-        System.out.println("It appears that you're not logged in, please log in.");
-        System.out.println("----------Login--------");
-        System.out.println("Email: ");
-        String email = in.nextLine();
-        System.out.println("Password: ");
-        String password = in.nextLine();
-        User user = login.getUser(email, password);
+    private User start() {
+        User user = this.login.loginUser();
         if (user == null) {
             System.out.println("This account does not exist yet! Please register");
             while (true) {
-                System.out.println("Name: ");
-                String name = in.nextLine();
-                System.out.println("Email: ");
-                email = in.nextLine();
-                System.out.println("Password: ");
-                password = in.nextLine();
-                System.out.println("Instructor: (y/n)");
-                boolean isInstructor = in.nextLine().equalsIgnoreCase("y");
-                user = new User(name, email, password, isInstructor);
-                boolean isRegistered = register.registerUser(user);
+                user = this.register.registerUser();
+                boolean isRegistered = register.insertUser(user);
                 if (isRegistered) {
                     break;
                 }
-                System.out.println("An error has occurred! Try again: ");
+                System.out.println("An error has occurred! Please try again: ");
             }
         }
         return user;
@@ -49,21 +35,33 @@ public class MainController {
         HashMap<Integer, String> courses = this.createPost.viewCourses();
         System.out.println("Courses: ");
         System.out.println(courses.values().toString());
-        System.out.println("Select a course: " + courses.keySet().toString());
+        System.out.println("Select a course: " + courses.keySet());
         String courseID = in.nextLine();
-        Course course = createPost.selectCourse(courseID);
-        System.out.println("Welcome to: " + course);
+        this.course = createPost.selectCourse(courseID);
+    }
+
+    private void selectAction() {
+        Scanner in = new Scanner(System.in);
+        System.out.println("Welcome to: " + this.course);
         while (true) {
+            System.out.println("Current posts:" );
+
+
             System.out.println("Do you want to post? (y/n)");
             if (in.nextLine().equalsIgnoreCase("y")) {
                 //create post
+                createPost.newPost(this.course.getCourseID(), this.user.getUserID());
+                continue;
             }
             System.out.println("Do you want to comment on a post? (y/n)");
             if (in.nextLine().equalsIgnoreCase("y")) {
-                //find post then comment.
+                //find post then comment
+                continue;
+
             }
             System.out.println("Do you want to log out? (y/n)");
             if (in.nextLine().equalsIgnoreCase("y")) {
+                System.out.println("Bye bye " + this.user.getName() + "!");
                 break;
             }
         }
@@ -72,9 +70,11 @@ public class MainController {
     public void startProgram() {
         System.out.println("--------Welcome to Piazza--------");
         if (this.user == null) {
-            this.user = this.init();
+            this.user = this.start();
         }
+        System.out.println("Success! You are logged in. ");
         this.chooseCourse();
+        this.selectAction();
 
     }
 
