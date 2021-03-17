@@ -11,13 +11,14 @@ public class User {
     private int postsViewed = 0;
     private int postsLiked = 0;
 
+    //User object instanced from Java
     public User(String name, String email, String password, boolean isInstructor) {
         this.name = name;
         this.email = email;
-        this.password = password;
+        this.password = Register.hashPassword(password);
         this.isInstructor = isInstructor;
     }
-
+    //User object instanced from SQL query
     public User(int userID,String[] strings, boolean isInstructor, int[] postCounts) {
         this.userID = userID;
         this.name = strings[0];
