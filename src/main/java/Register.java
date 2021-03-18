@@ -4,16 +4,17 @@ import java.sql.*;
 import java.util.Scanner;
 
 
-public class Register extends DBConnect{
+public class Register extends DBConnect {
+
     private PreparedStatement regStatement;
 
-    private User user = null;
     private final Login login = new Login();
 
     public Register() {
         super.connect();
     }
 
+    //Hash passwords, cause why not?
     public static String hashPassword(String passwordToHash) {
         String generatedPassword = null;
         try {
@@ -35,44 +36,40 @@ public class Register extends DBConnect{
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        //System.out.println(generatedPassword);
         return generatedPassword;
     }
 
 
-    private void startReg() {
-        try {
-            String SQL = "INSERT INTO users (name, email, password, isInstructor) " +
-                        "VALUES ((?), (?), (?), (?))";
-
-            this.regStatement = conn.prepareStatement(SQL);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public boolean insertUser(User user) {
-        User existingUser = this.login.getUser(user.getEmail(), user.getPassword());
-        this.user = user;
+    private User insertUser(String name, String email, String password, boolean isInstructor) {
+        User existingUser = this.login.getUser(email, password);
 
         if (existingUser != null) {
             System.out.println("This user already exists, please choose another email");
-            return false;
+            return null;
         }
 
-        this.startReg();
         try {
-            this.regStatement.setString(1, this.user.getName());
-            this.regStatement.setString(2, this.user.getEmail());
-            this.regStatement.setString(3, Register.hashPassword(this.user.getPassword()));
-            this.regStatement.setBoolean(4, this.user.isInstructor()); //Need to convert into tiny int
-            this.regStatement.execute();
-            return true;
+            String SQL = "INSERT INTO users (name, email, password, isInstructor) " +
+                    "VALUES ((?), (?), (?), (?))";
+
+            this.regStatement = conn.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
+
+            this.regStatement.setString(1, name);
+            this.regStatement.setString(2, email);
+            this.regStatement.setString(3, password);
+            this.regStatement.setBoolean(4, isInstructor);
+            this.regStatement.executeUpdate();
+            ResultSet rs = this.regStatement.getGeneratedKeys();
+            int userID = 0;
+            if (rs.next()) {
+                userID = Math.toIntExact(rs.getLong(1));
+            }
+            return new User(userID, name, email, password, isInstructor);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
     public User registerUser() {
@@ -82,17 +79,9 @@ public class Register extends DBConnect{
         System.out.println("Email: ");
         String email = in.nextLine();
         System.out.println("Password: ");
-        String password = in.nextLine();
+        String password = Register.hashPassword(in.nextLine());
         System.out.println("Instructor: (y/n)");
         boolean isInstructor = in.nextLine().equalsIgnoreCase("y");
-        return new User(name, email, password, isInstructor);
+        return this.insertUser(name, email, password, isInstructor);
     }
-
-
-    public static void main(String[] args) {
-        /* User marius = new User("Marius", "mariuhar@stud.ntnu.no", "124", true);
-        // Register register = new Register();
-        register.registerUser(marius);*/
-    }
-
 }

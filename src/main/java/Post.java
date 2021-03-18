@@ -1,51 +1,35 @@
 public class Post {
-    private int postID;
-    private String type;
-    private String summary;
-    private String content;
-    private boolean allowAnonymous;
-    private int courseID;
-    private int userID;
+    private final int postID;
+    private final String type;
+    private final String summary;
+    private final String content;
+    private final boolean allowAnonymous;
+    private final int courseID;
+    private final int userID;
     private int likes = 0;
 
-    public Post(String type, String summary, String content, boolean allowAnonymous, int courseID, int userID) {
+
+    public Post(int postID, String type, String summary, String content, int likes, boolean allowAnonymous, int courseID, int userID) {
         this.type = type;
         this.summary = summary;
         this.content = content;
         this.allowAnonymous = allowAnonymous;
         this.courseID = courseID;
         this.userID = userID;
-    }
-
-    public void setPostID(int postID) {
         this.postID = postID;
+        this.likes = likes;
     }
 
-    public int getPostID() {
-        return postID;
-    }
-
-    public String getContent() {
-        return this.content;
-    }
-
-    public int getCourseID() {
-        return this.courseID;
-    }
-
-    public int getUserID() {
-        return this.userID;
-    }
-
-    public boolean isAllowAnonymous() {
-        return this.allowAnonymous;
-    }
-
-    public String getSummary() {
-        return this.summary;
-    }
-
-    public String getType() {
-        return this.type;
+    public String toString() {
+        return  "================================" + "\n" +
+                "Post nr: " + this.postID + "\n" +
+                "================================" + "\n" +
+                "Type: " + this.type + "\n" +
+                "Summary: " + this.summary + "\n" +
+                "----Content----" + "\n" +
+                this.content + "\n" +
+                "Likes: " + this.likes + "\n" +
+                "By: " + (this.allowAnonymous ? this.userID : "Anon") + "\n" +
+                "================================" + "\n";
     }
 }

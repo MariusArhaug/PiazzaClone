@@ -1,12 +1,8 @@
 import java.sql.*;
 
-
 public class DBConnect {
     protected Connection conn;
 
-    public DBConnect () {
-        super();
-    }
     public void connect() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -18,10 +14,5 @@ public class DBConnect {
         } catch (Exception e) {
             throw new RuntimeException("Unable to connect", e);
         }
-    }
-
-    public static void main(String[] args) {
-        DBConnect db = new DBConnect();
-        db.connect();
     }
 }

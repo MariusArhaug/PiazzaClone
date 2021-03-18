@@ -1,4 +1,3 @@
-
 import java.sql.*;
 import java.util.Scanner;
 
@@ -10,22 +9,14 @@ public class Login extends DBConnect {
         super.connect();
     }
 
-    //Prepare statement
-    private void startLogin() {
+    //get user from database
+    public User getUser(String email, String password) {
         try {
             String SQLQuery = "SELECT * " +
                     "FROM users" +
                     "   WHERE email = (?) AND password = (?)";
             this.regStatement = conn.prepareStatement(SQLQuery);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
-    //get user from database
-    public User getUser(String email, String password) {
-        this.startLogin();
-        try {
             this.regStatement.setString(1, email);
             this.regStatement.setString(2, Register.hashPassword(password));
             ResultSet rs = this.regStatement.executeQuery();
@@ -51,6 +42,7 @@ public class Login extends DBConnect {
         }
         return null;
     }
+
     //Interface to fill in user info.
     public User loginUser() {
         Scanner in = new Scanner(System.in);

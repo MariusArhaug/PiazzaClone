@@ -2,17 +2,18 @@
 
 public class User {
 
-    private int userID;
-    private String name;
-    private String email;
-    private String password;
-    private boolean isInstructor = false;
+    private final int userID;
+    private final String name;
+    private final String email;
+    private final String password;
+    private final boolean isInstructor;
     private int postsCreated = 0;
     private int postsViewed = 0;
     private int postsLiked = 0;
 
     //User object instanced from Java
-    public User(String name, String email, String password, boolean isInstructor) {
+    public User(int userID, String name, String email, String password, boolean isInstructor) {
+        this.userID = userID;
         this.name = name;
         this.email = email;
         this.password = password;
@@ -36,12 +37,6 @@ public class User {
 
     public String getName() {
         return this.name;
-    }
-    public String getEmail() {
-        return this.email;
-    }
-    public String getPassword() {
-        return this.password;
     }
 
     public boolean isInstructor() { return this.isInstructor;}

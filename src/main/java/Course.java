@@ -1,9 +1,10 @@
 public class Course {
-    private int courseID;
-    private String name;
-    private char term;
-    private boolean allowAnonymous = false;
+    private final int courseID;
+    private final String name;
+    private final char term;
+    private final boolean allowAnonymous;
 
+    //Constructor for course objects
     public Course(int courseID, String name, char term, boolean allowAnonymous) {
         this.courseID = courseID;
         this.name = name;
@@ -19,9 +20,6 @@ public class Course {
         return this.name;
     }
 
-    public char getTerm() {
-        return term;
-    }
 
     public String toString() {
         return this.name + " : " + this.term;
