@@ -141,11 +141,11 @@ public class CreatePost extends DBConnect {
                 .map(e -> Integer.toString(e.getFolderID()))
                 .collect(Collectors.joining(", ")) + "]");
         int folderID = Integer.parseInt(in.nextLine());
-        Folder folder = courseFolders
+        /*Folder folder = courseFolders
                 .stream()
                 .filter(e -> e.getFolderID() == folderID)
                 .collect(Collectors.toList())
-                .get(0);
+                .get(0);*/
 
         System.out.println("Summary: ");
         String summary = in.nextLine();
