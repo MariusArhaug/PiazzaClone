@@ -15,8 +15,16 @@ public class Course {
         return courseID;
     }
 
+    public String getName() {
+        return this.name;
+    }
+
+    public char getTerm() {
+        return term;
+    }
+
     public String toString() {
-        return this.name + ": " + this.term + ", Allow anonymous? " + (this.allowAnonymous ?  "yes" : "no");
+        return this.name + " : " + this.term;
     }
 
 }

@@ -1,5 +1,7 @@
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class MainController {
 
@@ -32,17 +34,24 @@ public class MainController {
 
     private void chooseCourse() {
         Scanner in = new Scanner(System.in);
-        HashMap<Integer, String> courses = this.createPost.viewCourses();
+        List<Course> courses = this.createPost.viewCourses();
         System.out.println("Courses: ");
-        System.out.println(courses.values().toString());
-        System.out.println("Select a course: " + courses.keySet());
+        System.out.println(courses
+                .stream()
+                .map(e -> e.getName() + " ID: " + e.getCourseID())
+                .collect(Collectors.joining(" "))
+        );
+        System.out.println("Select a courseID: [" + courses
+                .stream()
+                .map(e -> Integer.toString(e.getCourseID()))
+                .collect(Collectors.joining(", ")) + "]");
         String courseID = in.nextLine();
         this.course = createPost.selectCourse(courseID);
     }
 
     private void selectAction() {
         Scanner in = new Scanner(System.in);
-        System.out.println("Welcome to: " + this.course);
+        System.out.println("======== | Welcome to: " + this.course + " | ========");
         while (true) {
             System.out.println("Current posts:" );
 
@@ -51,13 +60,12 @@ public class MainController {
             if (in.nextLine().equalsIgnoreCase("y")) {
                 //create post
                 createPost.newPost(this.course.getCourseID(), this.user.getUserID());
-                continue;
+
             }
             System.out.println("Do you want to comment on a post? (y/n)");
             if (in.nextLine().equalsIgnoreCase("y")) {
                 //find post then comment
                 continue;
-
             }
             System.out.println("Do you want to log out? (y/n)");
             if (in.nextLine().equalsIgnoreCase("y")) {
@@ -68,16 +76,14 @@ public class MainController {
     }
 
     public void startProgram() {
-        System.out.println("--------Welcome to Piazza--------");
+        System.out.println("-----------Welcome to Piazza-----------");
         if (this.user == null) {
             this.user = this.start();
         }
-        System.out.println("Success! You are logged in. ");
+        System.out.println("Success! Welcome " +  this.user.getName());
         this.chooseCourse();
         this.selectAction();
-
     }
-
 
     public static void main(String[] args) {
         MainController controller = new MainController();

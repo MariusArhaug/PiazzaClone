@@ -10,6 +10,7 @@ public class Login extends DBConnect {
         super.connect();
     }
 
+    //Prepare statement
     private void startLogin() {
         try {
             String SQLQuery = "SELECT * " +
@@ -21,11 +22,12 @@ public class Login extends DBConnect {
         }
     }
 
+    //get user from database
     public User getUser(String email, String password) {
         this.startLogin();
         try {
             this.regStatement.setString(1, email);
-            this.regStatement.setString(2, password);
+            this.regStatement.setString(2, Register.hashPassword(password));
             ResultSet rs = this.regStatement.executeQuery();
             if (rs.next()) {
                 int userID = rs.getInt("userID");
@@ -41,6 +43,7 @@ public class Login extends DBConnect {
                         rs.getInt("postsLiked")
 
                 };
+                //Return as a user object.
                 return new User(userID, strings, isInstructor, postCounts);
             }
         } catch(Exception e) {
@@ -48,6 +51,7 @@ public class Login extends DBConnect {
         }
         return null;
     }
+    //Interface to fill in user info.
     public User loginUser() {
         Scanner in = new Scanner(System.in);
         System.out.println("It appears that you're not logged in, please log in.");

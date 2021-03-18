@@ -65,7 +65,7 @@ public class Register extends DBConnect{
         try {
             this.regStatement.setString(1, this.user.getName());
             this.regStatement.setString(2, this.user.getEmail());
-            this.regStatement.setString(3, this.user.getPassword());
+            this.regStatement.setString(3, Register.hashPassword(this.user.getPassword()));
             this.regStatement.setBoolean(4, this.user.isInstructor()); //Need to convert into tiny int
             this.regStatement.execute();
             return true;

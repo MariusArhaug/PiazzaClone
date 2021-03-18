@@ -15,7 +15,7 @@ public class User {
     public User(String name, String email, String password, boolean isInstructor) {
         this.name = name;
         this.email = email;
-        this.password = Register.hashPassword(password);
+        this.password = password;
         this.isInstructor = isInstructor;
     }
     //User object instanced from SQL query
