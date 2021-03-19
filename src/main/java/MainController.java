@@ -22,6 +22,18 @@ public class MainController {
         DBConnect connection = new DBConnect();
         connection.connect();
     }
+
+    //Main start tp the program
+    public void startProgram() {
+        System.out.println("-----------Welcome to Piazza-----------");
+        if (this.user == null) {
+            this.user = this.loginUser();
+        }
+        System.out.println("Success! Welcome " +  this.user.getName() + "!");
+        this.chooseCourse();
+        this.selectAction();
+    }
+
     //Interface to log in user.
     private User loginUser() {
         User user = this.login.loginUser();
@@ -212,17 +224,6 @@ public class MainController {
         }
         System.out.println("Your reply: ");
         System.out.println(reply);
-    }
-
-    //Main start tp the program
-    public void startProgram() {
-        System.out.println("-----------Welcome to Piazza-----------");
-        if (this.user == null) {
-            this.user = this.loginUser();
-        }
-        System.out.println("Success! Welcome " +  this.user.getName() + "!");
-        this.chooseCourse();
-        this.selectAction();
     }
 
     public static void main(String[] args) {
