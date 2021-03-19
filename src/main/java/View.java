@@ -10,32 +10,7 @@ public class View extends DBConnect {
         super.connect();
     }
 
-    public List<Folder> viewCourseFolders(int courseID) {
-        if (courseID == 0) {
-            throw new IllegalArgumentException("Course Not found");
-        }
-        try {
-            String SQLQuery = "SELECT * " +
-                    "FROM folders   " +
-                    "WHERE courseID = (?)";
-            this.regStatement = conn.prepareStatement(SQLQuery);
-            this.regStatement.setInt(1, courseID);
-            ResultSet rs = this.regStatement.executeQuery();
-            List<Folder> folders = new ArrayList<>();
 
-            while (rs.next()) {
-                int folderID = rs.getInt("folderID");
-                String folderName = rs.getString("name");
-                int superFolderID = rs.getInt("superFolderID");
-                folders.add(new Folder(folderID, folderName, courseID, superFolderID));
-            }
-            return folders;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     public List<Course> viewCourses() {
         try {
@@ -60,7 +35,6 @@ public class View extends DBConnect {
         return null;
     }
 
-
     public List<Post> viewPosts(int courseID) {
         try {
             String SQLQuery = "SELECT * " +
@@ -70,6 +44,22 @@ public class View extends DBConnect {
             this.regStatement.setInt(1, courseID);
             return this.findPosts(courseID);
         } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Post> viewPosts(int courseID, String searchInput) {
+        try {
+            String SQLQuery = "SELECT * " +
+                    "FROM posts " +
+                    "WHERE courseID = (?) AND (content LIKE (?) OR summary LIKE (?))";
+            this.regStatement = conn.prepareStatement(SQLQuery);
+            this.regStatement.setInt(1, courseID);
+            this.regStatement.setString(2, "%" + searchInput + "%");
+            this.regStatement.setString(3, "%" + searchInput + "%");
+            return this.findPosts(courseID);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -96,23 +86,32 @@ public class View extends DBConnect {
         return null;
     }
 
-
-    public List<Post> viewPosts(int courseID, String searchInput) {
+    public List<Folder> viewCourseFolders(int courseID) {
+        if (courseID == 0) {
+            throw new IllegalArgumentException("Course Not found");
+        }
         try {
             String SQLQuery = "SELECT * " +
-                    "FROM posts " +
-                    "WHERE courseID = (?) AND (content LIKE (?) OR summary LIKE (?))";
+                    "FROM folders   " +
+                    "WHERE courseID = (?)";
             this.regStatement = conn.prepareStatement(SQLQuery);
             this.regStatement.setInt(1, courseID);
-            this.regStatement.setString(2, "%" + searchInput + "%");
-            this.regStatement.setString(3, "%" + searchInput + "%");
-            return this.findPosts(courseID);
+            ResultSet rs = this.regStatement.executeQuery();
+            List<Folder> folders = new ArrayList<>();
+
+            while (rs.next()) {
+                int folderID = rs.getInt("folderID");
+                String folderName = rs.getString("name");
+                int superFolderID = rs.getInt("superFolderID");
+                folders.add(new Folder(folderID, folderName, courseID, superFolderID));
+            }
+            return folders;
+
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
-
 
     public List<Thread> viewThreads(int postID) {
         try {
