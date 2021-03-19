@@ -41,18 +41,21 @@ public class GetStatistics extends DBConnect {
 
     }
 
-    public String printStats(List<Map<String, Integer[]>> stats) {
-
-        String result = "========================";
-        for (Map<String, Integer[]> innerMap : stats) {
-            result += "Name: " + innerMap.keySet().iterator().next();
-            for (Integer[] values: innerMap.values()) {
-                result += " Posts created: " + values[0];
-                result += " Posts viewed: " + values[1];
+    public void printStats(List<Map<String, Integer[]>> stats) {
+        if (stats == null) {
+            System.out.println("It appears that there are no current statistics available yet!");
+        } else {
+            String result = "========================";
+            for (Map<String, Integer[]> innerMap : stats) {
+                result += "Name: " + innerMap.keySet().iterator().next();
+                for (Integer[] values : innerMap.values()) {
+                    result += " Posts created: " + values[0];
+                    result += " Posts viewed: " + values[1];
+                }
+                result += "========================";
+                result += "\n";
             }
-            result += "========================";
-            result += "\n";
+            System.out.println(result);
         }
-        return result;
     }
 }
