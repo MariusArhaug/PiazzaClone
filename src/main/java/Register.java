@@ -39,6 +39,18 @@ public class Register extends DBConnect {
         return generatedPassword;
     }
 
+    public User registerUser() {
+        Scanner in = new Scanner(System.in);
+        System.out.println("Name: ");
+        String name = in.nextLine();
+        System.out.println("Email: ");
+        String email = in.nextLine();
+        System.out.println("Password: ");
+        String password = Register.hashPassword(in.nextLine());
+        System.out.println("Instructor: (y/n)");
+        boolean isInstructor = in.nextLine().equalsIgnoreCase("y");
+        return this.insertUser(name, email, password, isInstructor);
+    }
 
     private User insertUser(String name, String email, String password, boolean isInstructor) {
         User existingUser = this.login.getUser(email, password);
@@ -47,7 +59,6 @@ public class Register extends DBConnect {
             System.out.println("This user already exists, please choose another email");
             return null;
         }
-
         try {
             String SQL = "INSERT INTO users (name, email, password, isInstructor) " +
                     "VALUES ((?), (?), (?), (?))";
@@ -70,18 +81,5 @@ public class Register extends DBConnect {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public User registerUser() {
-        Scanner in = new Scanner(System.in);
-        System.out.println("Name: ");
-        String name = in.nextLine();
-        System.out.println("Email: ");
-        String email = in.nextLine();
-        System.out.println("Password: ");
-        String password = Register.hashPassword(in.nextLine());
-        System.out.println("Instructor: (y/n)");
-        boolean isInstructor = in.nextLine().equalsIgnoreCase("y");
-        return this.insertUser(name, email, password, isInstructor);
     }
 }
