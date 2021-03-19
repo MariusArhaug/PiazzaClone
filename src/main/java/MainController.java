@@ -83,7 +83,11 @@ public class MainController {
                 System.out.println("Do you want to view user statistics? (y/n)");
                 if (in.nextLine().equalsIgnoreCase("y")) {
                     List<Map<String, Integer[]>> stats = this.stats.getStats();
-                    System.out.println(this.stats.printStats(stats));
+                    if (stats == null) {
+                        System.out.println("It appears that there are no current statistics available yet!");
+                    } else {
+                        System.out.println(this.stats.printStats(stats));
+                    }
                 }
             }
             System.out.println("Do you want to search for a post? (y/n)");
