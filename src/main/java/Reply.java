@@ -1,3 +1,5 @@
+
+//Reply class that lets us store different data about a reply.
 public class Reply {
 
     private final int replyID;

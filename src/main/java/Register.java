@@ -1,20 +1,24 @@
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
-
+//Let users register to the database, hashPasswords, and register users to different courses.
 public class Register extends DBConnect {
 
     private PreparedStatement regStatement;
 
     private final Login login = new Login();
+    private final View view = new View();
 
     public Register() {
         super.connect();
     }
 
     //Hash passwords, cause why not?
+    //get a cleartext password as argument and return a MD5 hashed password.
     public static String hashPassword(String passwordToHash) {
         String generatedPassword = null;
         try {
@@ -39,6 +43,7 @@ public class Register extends DBConnect {
         return generatedPassword;
     }
 
+    //Interface for user to register a new user-account. Returns the new user as a User object.
     public User registerUser() {
         Scanner in = new Scanner(System.in);
         System.out.println("Name: ");
@@ -52,6 +57,7 @@ public class Register extends DBConnect {
         return this.insertUser(name, email, password, isInstructor);
     }
 
+    //Insert the new user into the database. Return the newly registered user as a User object.
     private User insertUser(String name, String email, String password, boolean isInstructor) {
         User existingUser = this.login.getUser(email, password);
 
@@ -81,5 +87,39 @@ public class Register extends DBConnect {
             e.printStackTrace();
         }
         return null;
+    }
+
+    //Instructor can register a user to a chosen course with courseID
+    public void registerUserToCourse(int courseID) {
+        Scanner in = new Scanner(System.in);
+        List<User> users = this.view.viewUsersNotInCourse(courseID);
+
+        System.out.println("Students: " + users
+                .stream()
+                .map(User::toString)
+                .collect(Collectors.joining(" ")));
+        System.out.println("Select an studentID you want to invite to this course:");
+        System.out.println("Student ID: [" + users
+                .stream()
+                .map(e -> Integer.toString(e.getUserID()))
+                .collect(Collectors.joining(", ")) + "]");
+        int userID = Integer.parseInt(in.nextLine());
+        this.insertUserToCourse(userID, courseID);
+    }
+
+    //Insert the new relation between a user and a course into the table userCourse in the database.
+    private void insertUserToCourse(int userID, int courseID) {
+        try {
+            String SQL = "INSERT INTO userCourse (userID, courseID) " +
+                    "VALUES ((?), (?))";
+
+            this.regStatement = conn.prepareStatement(SQL);
+            this.regStatement.setInt(1, userID);
+            this.regStatement.setInt(2, courseID);
+            this.regStatement.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

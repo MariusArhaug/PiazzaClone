@@ -10,6 +10,7 @@ public class User {
     private int postsCreated = 0;
     private int postsViewed = 0;
     private int postsLiked = 0;
+    private boolean hasUpdated = false;
 
     //User object instanced from Java
     public User(int userID, String name, String email, String password, boolean isInstructor) {
@@ -43,14 +44,34 @@ public class User {
 
 
     public String toString() {
-        return "UserID: " + this.userID + ", Name: " + this.name + ", Email: " + this.email;
+        return "| UserID: " + this.userID + "| Name: " + this.name + " | Email: " + this.email + " |";
     }
 
     public void increasePostsViewed() {
         this.postsViewed++;
+        this.hasUpdated = true;
     }
 
     public void increasePostsCreated() {
         this.postsCreated++;
+        this.hasUpdated = true;
+    }
+
+    public int getPostsCreated() {
+        return postsCreated;
+
+    }
+
+    public int getPostsViewed() {
+        return postsViewed;
+
+    }
+
+    public int getPostsLiked() {
+        return postsLiked;
+    }
+
+    public boolean hasUpdated() {
+        return hasUpdated;
     }
 }

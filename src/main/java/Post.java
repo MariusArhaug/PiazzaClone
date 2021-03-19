@@ -1,3 +1,5 @@
+
+//Post class that lets us store different data about a post.
 public class Post {
     private final int postID;
     private final String type;

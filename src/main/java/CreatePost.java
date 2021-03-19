@@ -3,16 +3,17 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+//Lets users createPosts, add them to folders, and create folders.
 public class CreatePost extends DBConnect {
 
-    //Global field for the new post we create
+    //Initialize class
     private final View view = new View();
     private PreparedStatement regStatement;
     public CreatePost() {
         super.connect();
     }
 
-    //Select course based on user input
+    //Select course based on user input and return as a new Course object
     public Course selectCourse(int courseID) {
         try {
             String SQLQuery = "SELECT * " +
@@ -40,18 +41,8 @@ public class CreatePost extends DBConnect {
 
         System.out.println("Post type: (Question, Note, Poll) ");
         String type = in.nextLine().toLowerCase();
-        System.out.println("Folders:");
-        List<Folder> courseFolders = this.view.viewCourseFolders(courseID);
-        System.out.println(courseFolders
-                .stream()
-                .map(Folder::toString)
-                .collect(Collectors.joining(" ")));
-        System.out.println("Select a folder: [" + courseFolders
-                .stream()
-                .map(e -> Integer.toString(e.getFolderID()))
-                .collect(Collectors.joining(", ")) + "]");
-        int folderID = Integer.parseInt(in.nextLine());
-
+        System.out.println("Folders: ");
+        int folderID = this.selectFolders(courseID);
         System.out.println("Summary: ");
         String summary = in.nextLine();
         System.out.println("Your question:  ");
@@ -62,11 +53,12 @@ public class CreatePost extends DBConnect {
             System.out.println("Anonymous? (y/n):  ");
             isAnonymous = in.nextLine().equalsIgnoreCase("y");
         }
-
+        //Once all the info about the post is gathered, create new post
         return this.insertPost(type, summary, content, isAnonymous, folderID, courseID, userID);
     }
 
-    //insert post into database
+
+    //Insert new post into database and return the post as a Post object.
     private Post insertPost(String type, String summary, String content, boolean allowAnonymous, int folderID, int courseID, int userID) {
         try {
             String SQLQuery = "" +
@@ -84,6 +76,7 @@ public class CreatePost extends DBConnect {
             ResultSet rs = regStatement.getGeneratedKeys();
             int postID = 0;
             if (rs.next())  {
+                //We also want the generated primary key value
                 postID = Math.toIntExact(rs.getLong(1));
             }
             this.addPostToFolder(postID, folderID);
@@ -107,6 +100,58 @@ public class CreatePost extends DBConnect {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    //Select a folder(s) to corresponding course with courseID
+    private int selectFolders(int courseID) {
+        Scanner in = new Scanner(System.in);
+        List<Folder> courseFolders = this.view.viewCourseFolders(courseID);
+        System.out.println(courseFolders
+                .stream()
+                .map(Folder::toString)
+                .collect(Collectors.joining(" ")));
+        System.out.println("Select a folder: [" + courseFolders
+                .stream()
+                .map(e -> Integer.toString(e.getFolderID()))
+                .collect(Collectors.joining(", ")) + "]");
+        return Integer.parseInt(in.nextLine());
+    }
+
+    //Interface for users to create a folder with required fieldss
+    public Folder createFolder(int courseID) {
+        Scanner in = new Scanner(System.in);
+        System.out.println("Folder name: ");
+        String folderName = in.nextLine();
+        System.out.println("Super folder (select 0 for none) :  ");
+        int superFolderID = this.selectFolders(courseID);
+        return this.insertFolder(courseID, folderName, superFolderID);
+    }
+
+    //Insert new folder into database and return the folder as a folder object.
+    private Folder insertFolder(int courseID, String folderName, int superFolderID) {
+        try {
+            String SQLQuery = "" +
+                    "INSERT INTO folders (name, courseID, superFolderID)" +
+                    "VALUES ((?), (?), (?))";
+
+            this.regStatement = this.conn.prepareStatement(SQLQuery, Statement.RETURN_GENERATED_KEYS);
+            this.regStatement.setString(1, folderName);
+            this.regStatement.setInt(2, courseID);
+            if (superFolderID == 0) {
+                this.regStatement.setNull(3, Types.NULL);
+            } else {
+                this.regStatement.setInt(3, superFolderID);
+            }
+            this.regStatement.executeUpdate();
+            ResultSet rs = this.regStatement.getGeneratedKeys();
+            if (rs.next()) {
+                return new Folder(Math.toIntExact(rs.getLong(1)), folderName, courseID, superFolderID);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

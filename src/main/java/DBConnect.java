@@ -1,8 +1,10 @@
 import java.sql.*;
 
+//Connect us to our mySQL database hosted at NTNU's server, we need VPN to make this connection work.
 public class DBConnect {
     protected Connection conn;
 
+    //Start connection
     public void connect() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");

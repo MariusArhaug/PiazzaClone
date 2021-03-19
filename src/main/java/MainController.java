@@ -3,6 +3,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+//Main controller for Piazza
 public class MainController {
 
     //Regular classes
@@ -22,8 +23,9 @@ public class MainController {
         connection.connect();
     }
     //Interface to log in user.
-    private User start() {
+    private User loginUser() {
         User user = this.login.loginUser();
+        //If we don't find user in db we get user = null
         if (user == null) {
             System.out.println("This account does not exist yet! Please register");
             while (true) {
@@ -48,7 +50,7 @@ public class MainController {
                 .map(e -> e.getName() + " ID: " + e.getCourseID())
                 .collect(Collectors.joining(" "))
         );
-
+        //See a users courses that he is registered for.
         List<Course> registeredCourses = this.view.viewRegisteredCourses(this.user.getUserID());
         System.out.println("All registered courses: ");
         System.out.println(registeredCourses
@@ -57,6 +59,7 @@ public class MainController {
                 .collect(Collectors.joining(" "))
         );
         while (true) {
+            //Make sure that user selects right courseID (only courses that he is registered for)
             System.out.println("Select a courseID: [" + registeredCourses
                     .stream()
                     .map(e -> Integer.toString(e.getCourseID()))
@@ -74,46 +77,69 @@ public class MainController {
     private void selectAction() {
         Scanner in = new Scanner(System.in);
         System.out.println("======== | Welcome to: " + this.course + " | ========");
+        //Keep user inside of "Piazza" until he/she wants to log out.
         while (true) {
             this.printPosts(this.course.getCourseID());
 
+            //=====Create post=====//
             System.out.println("Do you want create a post? (y/n)");
             if (in.nextLine().equalsIgnoreCase("y")) {
-                //create post
                 Post newPost = createPost.createPost(this.course.getCourseID(), this.user.getUserID(), this.course.allowAnonymous());
                 System.out.println("You created a new post: ");
                 System.out.println(newPost);
                 this.user.increasePostsCreated();
-
             }
+            //=====Reply to post=====//
             System.out.println("Do you want to select/reply to a post? (y/n)");
             if (in.nextLine().equalsIgnoreCase("y")) {
-                this.printPosts(this.course.getCourseID());
                 this.replyToPost();
                 this.user.increasePostsViewed();
             }
 
+            //=====View stats / Create folder / invite users=====//
             if (this.user.isInstructor()) {
                 System.out.println("Do you want to view user statistics? (y/n)");
                 if (in.nextLine().equalsIgnoreCase("y")) {
                     List<Map<String, Integer[]>> stats = this.stats.getStats();
                     this.stats.printStats(stats);
                 }
+
+                System.out.println("Do you want to create folders for this course? (y/n)");
+                if (in.nextLine().equalsIgnoreCase("y")) {
+                    Folder newFolder = this.createPost.createFolder(this.course.getCourseID());
+                    System.out.println("======================================");
+                    System.out.println("| New folder created! " + newFolder + " |");
+                    System.out.println("======================================");
+                }
+
+                System.out.println("Do you want to invite students to this course? (y/n)");
+                if (in.nextLine().equalsIgnoreCase(("y"))) {
+                    this.register.registerUserToCourse(this.course.getCourseID());
+                }
             }
+
+            //=====Search for posts=====//
             System.out.println("Do you want to search for a post? (y/n)");
             if (in.nextLine().equalsIgnoreCase("y")) {
                this.search();
             }
 
+            //=====Log out=====//
             System.out.println("Do you want to log out? (y/n)");
             if (in.nextLine().equalsIgnoreCase("y")) {
+                //If we have updated a state in the current user object we need to update the database
+                if (this.user.hasUpdated()) {
+                    this.login.updateUser(this.user);
+                    System.out.println("New stats saved!");
+                }
                 System.out.println("Bye bye " + this.user.getName() + "!");
                 break;
             }
-            //Update user
         }
     }
 
+    //Start search input, user fills in what he wants to search for
+    //We try to find a post that either has a summary or content that includes the search input
     private void search() {
         Scanner in = new Scanner(System.in);
         while (true) {
@@ -134,11 +160,12 @@ public class MainController {
                     .stream()
                     .map(Object::toString)
                     .collect(Collectors.joining("\n")));
+            this.user.increasePostsViewed();
             break;
         }
     }
 
-
+    //Print posts to a corresponding course with courseID
     private void printPosts(int courseID) {
         System.out.println("Current posts:" );
         List<Post> posts = this.view.viewPosts(courseID);
@@ -152,15 +179,21 @@ public class MainController {
         }
     }
 
+    //Reply to post
     private void replyToPost() {
+        this.printPosts(this.course.getCourseID());
         Scanner in = new Scanner(System.in);
         System.out.println("Select a post you want to reply to: ");
         int postID = Integer.parseInt(in.nextLine());
         System.out.println("Your reply: ");
         String content = in.nextLine();
 
+        //Find the threads related to the post we want to reply to.
         List<Thread> threads = view.viewThreads(postID);
-        Thread thread = null;
+        Thread thread;
+
+        //If we have no threads, the reply becomes a Instructor/Student answer
+        //Here would also color the post if we used a GUI and not a TUI
         if (threads.isEmpty()) {
             String type = (this.user.isInstructor() ? "Instructor" : "Student") + " answer";
             thread = replyPost.newThread(postID, type);
@@ -169,7 +202,8 @@ public class MainController {
             System.out.println("You replied to a discussion");
             thread = replyPost.newThread(postID, "Discussion");
         }
-        Reply reply = null;
+        //Only users can select that they want their reply be anonymous
+        Reply reply;
         if (this.user.isInstructor()) {
             reply = replyPost.newReply(thread.getThreadID(), this.user, content, false);
         } else {
@@ -180,12 +214,13 @@ public class MainController {
         System.out.println(reply);
     }
 
+    //Main start tp the program
     public void startProgram() {
         System.out.println("-----------Welcome to Piazza-----------");
         if (this.user == null) {
-            this.user = this.start();
+            this.user = this.loginUser();
         }
-        System.out.println("Success! Welcome " +  this.user.getName());
+        System.out.println("Success! Welcome " +  this.user.getName() + "!");
         this.chooseCourse();
         this.selectAction();
     }

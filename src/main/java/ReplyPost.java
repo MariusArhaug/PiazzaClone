@@ -1,18 +1,16 @@
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
+//Let users reply to a specific post
 public class ReplyPost extends DBConnect {
 
-    private Reply newReply;
     private PreparedStatement regStatement;
     public ReplyPost() {
         super.connect();
     }
 
-
+    //Reply to a post with a specific threadID.
     public Reply newReply(int threadID, User user, String contents, boolean isAnonymous) {
         try {
             String SQLQuery =
@@ -38,6 +36,7 @@ public class ReplyPost extends DBConnect {
         return null;
     }
 
+    //Create a new thread for replies.
     public Thread newThread(int postID, String type) {
         try {
             String SQLQuery =

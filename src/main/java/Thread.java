@@ -1,3 +1,5 @@
+
+//Thread class that lets us store different data about a thread.
 public class Thread {
     private final int threadID;
     private final boolean isResolved;

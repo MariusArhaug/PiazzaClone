@@ -3,6 +3,8 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+//A view class that holds different methods that lets us view the total number of different parts of piazza,
+//Courses, Folders, Posts, Users. etc..
 public class View extends DBConnect {
 
     private PreparedStatement regStatement;
@@ -10,6 +12,7 @@ public class View extends DBConnect {
         super.connect();
     }
 
+    //View all courses
     public List<Course> viewCourses() {
         try {
             String SQLQuery = "" +
@@ -23,7 +26,7 @@ public class View extends DBConnect {
         return null;
     }
 
-
+    //View the courses that a user is registered for
     public List<Course> viewRegisteredCourses(int userID) {
         try {
             String SQLQuery = "" +
@@ -43,6 +46,8 @@ public class View extends DBConnect {
         return null;
     }
 
+    //Both viewCourses and viewRegisteredCourses use the same method to return of courses,
+    // depending on which method that fired findCourses()
     private List<Course> findCourses() {
         try {
             ResultSet rs = this.regStatement.executeQuery();
@@ -61,6 +66,7 @@ public class View extends DBConnect {
         return null;
     }
 
+    //View posts to a corresponding course with courseID
     public List<Post> viewPosts(int courseID) {
         try {
             String SQLQuery = "SELECT * " +
@@ -75,6 +81,7 @@ public class View extends DBConnect {
         return null;
     }
 
+    //View posts that corresponds to both a course with courseID aswell as a user search input.
     public List<Post> viewPosts(int courseID, String searchInput) {
         try {
             String SQLQuery = "SELECT * " +
@@ -90,7 +97,7 @@ public class View extends DBConnect {
         }
         return null;
     }
-
+    //both viewPosts methods call the findPost() to return a list of posts to a corresponding course with courseID
     private List<Post> findPosts(int courseID) {
         try {
             ResultSet rs = this.regStatement.executeQuery();
@@ -112,6 +119,7 @@ public class View extends DBConnect {
         return null;
     }
 
+    //View all the available folders for a given coruse with courseID
     public List<Folder> viewCourseFolders(int courseID) {
         if (courseID == 0) {
             throw new IllegalArgumentException("Course Not found");
@@ -139,6 +147,7 @@ public class View extends DBConnect {
         return null;
     }
 
+    //view the different threads to a specific post with postID
     public List<Thread> viewThreads(int postID) {
         try {
             String SQLQuery = "SELECT * " +
@@ -158,6 +167,44 @@ public class View extends DBConnect {
                 threads.add(new Thread(threadID, isResolved, type, timesViewed, timesCommented, postID));
             }
             return  threads;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    //View all users that are not registered to a specific course with courseID
+    public List<User> viewUsersNotInCourse(int courseID) {
+        try {
+            String SQLQuery = "SELECT * " +
+                    "FROM users " +
+                    "WHERE isInstructor = 0 AND userID NOT IN (" +
+                    "   SELECT userID" +
+                    "   FROM userCourse" +
+                    "   WHERE courseID <> (?)" +
+                    ")";
+            this.regStatement = this.conn.prepareStatement(SQLQuery);
+            this.regStatement.setInt(1, courseID);
+            ResultSet rs = this.regStatement.executeQuery();
+            List<User> users = new ArrayList<>();
+            while (rs.next()) {
+                int userID = rs.getInt("userID");
+                String[] strings = {
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("password"),
+                };
+                boolean isInstructor = rs.getBoolean("isInstructor");
+                int[] postCounts = {
+                        rs.getInt("postsCreated"),
+                        rs.getInt("postsViewed"),
+                        rs.getInt("postsLiked")
+
+                };
+                users.add(new User(userID, strings, isInstructor, postCounts));
+            }
+            return users;
 
         } catch (Exception e) {
             e.printStackTrace();

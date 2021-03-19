@@ -1,6 +1,7 @@
 import java.sql.*;
 import java.util.Scanner;
 
+//Log user in to program, and update user values in database.
 public class Login extends DBConnect {
 
     private PreparedStatement regStatement;
@@ -9,7 +10,7 @@ public class Login extends DBConnect {
         super.connect();
     }
 
-    //get user from database
+    //Get user from database with corresponding email and password and return as a user object.
     public User getUser(String email, String password) {
         try {
             String SQLQuery = "SELECT * " +
@@ -34,7 +35,6 @@ public class Login extends DBConnect {
                         rs.getInt("postsLiked")
 
                 };
-                //Return as a user object.
                 return new User(userID, strings, isInstructor, postCounts);
             }
         } catch(Exception e) {
@@ -53,5 +53,23 @@ public class Login extends DBConnect {
         System.out.println("Password: ");
         String password = in.nextLine();
         return this.getUser(email, password);
+    }
+
+    //Update user values if a user has done any action that indicates that these values have been updated.
+    public void updateUser(User user) {
+        try {
+            String SQLQuery = "" +
+                    "   UPDATE users " +
+                    "   SET postsCreated = (?), postsViewed=(?), postsLiked = (?)" +
+                    "   WHERE userID = (?)";
+            this.regStatement = conn.prepareStatement(SQLQuery);
+            this.regStatement.setInt(1, user.getPostsCreated());
+            this.regStatement.setInt(2, user.getPostsViewed());
+            this.regStatement.setInt(3, user.getPostsLiked());
+            this.regStatement.setInt(4, user.getUserID());
+            this.regStatement.executeUpdate();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 }
