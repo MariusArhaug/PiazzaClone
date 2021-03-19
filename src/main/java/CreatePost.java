@@ -34,7 +34,7 @@ public class CreatePost extends DBConnect {
     }
 
     //Interface for user to create a post
-    public Post createPost(int courseID, int userID) {
+    public Post createPost(int courseID, int userID, boolean allowAnonymous) {
         Scanner in = new Scanner(System.in);
         System.out.println("-------Make new post------");
 
@@ -57,9 +57,13 @@ public class CreatePost extends DBConnect {
         System.out.println("Your question:  ");
 
         String content = in.nextLine();
-        System.out.println("Anonymous? (y/n):  ");
-        boolean allowAnonymous = in.nextLine().equalsIgnoreCase("y");
-        return this.insertPost(type, summary, content, allowAnonymous, folderID, courseID, userID);
+        boolean isAnonymous = false;
+        if (allowAnonymous) {
+            System.out.println("Anonymous? (y/n):  ");
+            isAnonymous = in.nextLine().equalsIgnoreCase("y");
+        }
+
+        return this.insertPost(type, summary, content, isAnonymous, folderID, courseID, userID);
     }
 
     //insert post into database

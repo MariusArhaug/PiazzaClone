@@ -42,18 +42,32 @@ public class MainController {
     private void chooseCourse() {
         Scanner in = new Scanner(System.in);
         List<Course> courses = this.view.viewCourses();
-        System.out.println("Courses: ");
+        System.out.println("All current courses: ");
         System.out.println(courses
                 .stream()
                 .map(e -> e.getName() + " ID: " + e.getCourseID())
                 .collect(Collectors.joining(" "))
         );
-        System.out.println("Select a courseID: [" + courses
+
+        List<Course> registeredCourses = this.view.viewRegisteredCourses(this.user.getUserID());
+        System.out.println("All registered courses: ");
+        System.out.println(registeredCourses
                 .stream()
-                .map(e -> Integer.toString(e.getCourseID()))
-                .collect(Collectors.joining(", ")) + "]");
-        int courseID = Integer.parseInt(in.nextLine());
-        this.course = createPost.selectCourse(courseID);
+                .map(e -> e.getName() + " ID: " + e.getCourseID())
+                .collect(Collectors.joining(" "))
+        );
+        while (true) {
+            System.out.println("Select a courseID: [" + registeredCourses
+                    .stream()
+                    .map(e -> Integer.toString(e.getCourseID()))
+                    .collect(Collectors.joining(", ")) + "]");
+            int courseID = Integer.parseInt(in.nextLine());
+            if (registeredCourses.stream().anyMatch(e -> e.getCourseID() == courseID)) {
+                this.course = createPost.selectCourse(courseID);
+                break;
+            }
+            System.out.println("You are not registered for this course!");
+        }
     }
 
     //Main hub for different actions a student or instructor may choose
@@ -66,7 +80,7 @@ public class MainController {
             System.out.println("Do you want create a post? (y/n)");
             if (in.nextLine().equalsIgnoreCase("y")) {
                 //create post
-                Post newPost = createPost.createPost(this.course.getCourseID(), this.user.getUserID());
+                Post newPost = createPost.createPost(this.course.getCourseID(), this.user.getUserID(), this.course.allowAnonymous());
                 System.out.println("You created a new post: ");
                 System.out.println(newPost);
                 this.user.increasePostsCreated();

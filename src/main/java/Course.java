@@ -12,6 +12,10 @@ public class Course {
         this.allowAnonymous = allowAnonymous;
     }
 
+    public boolean allowAnonymous() {
+        return allowAnonymous;
+    }
+
     public int getCourseID() {
         return courseID;
     }

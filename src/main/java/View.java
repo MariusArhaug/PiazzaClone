@@ -16,8 +16,36 @@ public class View extends DBConnect {
                     "SELECT *   " +
                     "FROM course";
             this.regStatement = conn.prepareStatement(SQLQuery);
-            ResultSet rs = this.regStatement.executeQuery();
+            return this.findCourses();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
+
+    public List<Course> viewRegisteredCourses(int userID) {
+        try {
+            String SQLQuery = "" +
+                    "SELECT *   " +
+                    "FROM course " +
+                    "WHERE courseID IN (" +
+                    "   SELECT courseID " +
+                    "   FROM userCourse" +
+                    "   WHERE userID = (?)" +
+                    ") ";
+            this.regStatement = conn.prepareStatement(SQLQuery);
+            this.regStatement.setInt(1, userID);
+            return this.findCourses();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private List<Course> findCourses() {
+        try {
+            ResultSet rs = this.regStatement.executeQuery();
             List<Course> courses = new ArrayList<>();
             while (rs.next()) {
                 int courseID = rs.getInt("courseID");
@@ -27,7 +55,7 @@ public class View extends DBConnect {
                 courses.add(new Course(courseID, courseName, term, allowAnonymous));
             }
             return courses;
-        } catch (Exception e) {
+            } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
