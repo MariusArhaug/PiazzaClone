@@ -84,7 +84,6 @@ public class MainController {
                 if (in.nextLine().equalsIgnoreCase("y")) {
                     List<Map<String, Integer[]>> stats = this.stats.getStats();
                     this.stats.printStats(stats);
-
                 }
             }
             System.out.println("Do you want to search for a post? (y/n)");
@@ -122,7 +121,6 @@ public class MainController {
                     .map(Object::toString)
                     .collect(Collectors.joining("\n")));
             break;
-
         }
     }
 
