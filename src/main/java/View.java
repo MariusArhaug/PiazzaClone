@@ -10,8 +10,6 @@ public class View extends DBConnect {
         super.connect();
     }
 
-
-
     public List<Course> viewCourses() {
         try {
             String SQLQuery = "" +
