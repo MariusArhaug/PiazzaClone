@@ -94,6 +94,10 @@ public class Register extends DBConnect {
         Scanner in = new Scanner(System.in);
         List<User> users = this.view.viewUsersNotInCourse(courseID);
 
+        if (users.isEmpty()) {
+            System.out.println("It appears that every registered user in Piazza is registered for this course!");
+            return;
+        }
         System.out.println("Students: " + users
                 .stream()
                 .map(User::toString)
