@@ -101,7 +101,7 @@ public class View extends DBConnect {
         try {
             String SQLQuery = "SELECT * " +
                     "FROM posts " +
-                    "WHERE courseID = (?) AND (content LIKE (?) OR summary LIKE(?))";
+                    "WHERE courseID = (?) AND (content LIKE (?) OR summary LIKE (?))";
             this.regStatement = conn.prepareStatement(SQLQuery);
             this.regStatement.setInt(1, courseID);
             this.regStatement.setString(2, "%" + searchInput + "%");

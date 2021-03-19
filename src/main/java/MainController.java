@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,7 @@ public class MainController {
     private final CreatePost createPost = new CreatePost();
     private final ReplyPost replyPost = new ReplyPost();
     private final View view = new View();
+    private final GetStatistics stats = new GetStatistics();
 
     public MainController() {
         DBConnect connection = new DBConnect();
@@ -67,19 +69,21 @@ public class MainController {
                 Post newPost = createPost.createPost(this.course.getCourseID(), this.user.getUserID());
                 System.out.println("You created a new post: ");
                 System.out.println(newPost);
+                this.user.increasePostsCreated();
 
             }
             System.out.println("Do you want to select/reply to a post? (y/n)");
             if (in.nextLine().equalsIgnoreCase("y")) {
                 this.printPosts(this.course.getCourseID());
                 this.replyToPost();
+                this.user.increasePostsViewed();
             }
 
             if (this.user.isInstructor()) {
                 System.out.println("Do you want to view user statistics? (y/n)");
                 if (in.nextLine().equalsIgnoreCase("y")) {
-                    //View stats;
-                    continue;
+                    List<Map<String, Integer[]>> stats = this.stats.getStats();
+                    System.out.println(this.stats.printStats(stats));
                 }
             }
             System.out.println("Do you want to search for a post? (y/n)");
@@ -92,6 +96,7 @@ public class MainController {
                 System.out.println("Bye bye " + this.user.getName() + "!");
                 break;
             }
+            //Update user
         }
     }
 

@@ -46,7 +46,11 @@ public class User {
         return "UserID: " + this.userID + ", Name: " + this.name + ", Email: " + this.email;
     }
 
-    public static void main(String[] args) {
+    public void increasePostsViewed() {
+        this.postsViewed++;
+    }
 
+    public void increasePostsCreated() {
+        this.postsCreated++;
     }
 }
