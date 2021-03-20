@@ -57,7 +57,6 @@ public class CreatePost extends DBConnect {
         return this.insertPost(type, summary, content, isAnonymous, folderID, courseID, userID);
     }
 
-
     //Insert new post into database and return the post as a Post object.
     private Post insertPost(String type, String summary, String content, boolean allowAnonymous, int folderID, int courseID, int userID) {
         try {
@@ -102,6 +101,16 @@ public class CreatePost extends DBConnect {
         }
     }
 
+    //Interface for users to create a folder with required fieldss
+    public Folder createFolder(int courseID) {
+        Scanner in = new Scanner(System.in);
+        System.out.println("Folder name: ");
+        String folderName = in.nextLine();
+        System.out.println("Super folder (select 0 for none) :  ");
+        int superFolderID = this.selectFolders(courseID);
+        return this.insertFolder(courseID, folderName, superFolderID);
+    }
+
     //Select a folder(s) to corresponding course with courseID
     private int selectFolders(int courseID) {
         Scanner in = new Scanner(System.in);
@@ -115,16 +124,6 @@ public class CreatePost extends DBConnect {
                 .map(e -> Integer.toString(e.getFolderID()))
                 .collect(Collectors.joining(", ")) + "]");
         return Integer.parseInt(in.nextLine());
-    }
-
-    //Interface for users to create a folder with required fieldss
-    public Folder createFolder(int courseID) {
-        Scanner in = new Scanner(System.in);
-        System.out.println("Folder name: ");
-        String folderName = in.nextLine();
-        System.out.println("Super folder (select 0 for none) :  ");
-        int superFolderID = this.selectFolders(courseID);
-        return this.insertFolder(courseID, folderName, superFolderID);
     }
 
     //Insert new folder into database and return the folder as a folder object.
@@ -147,7 +146,6 @@ public class CreatePost extends DBConnect {
             if (rs.next()) {
                 return new Folder(Math.toIntExact(rs.getLong(1)), folderName, courseID, superFolderID);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
