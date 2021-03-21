@@ -29,14 +29,10 @@ public class View extends DBConnect {
     //View the courses that a user is registered for
     public List<Course> viewRegisteredCourses(int userID) {
         try {
-            String SQLQuery = "" +
-                    "SELECT *   " +
-                    "FROM course " +
-                    "WHERE courseID IN (" +
-                    "   SELECT courseID " +
-                    "   FROM userCourse" +
-                    "   WHERE userID = (?)" +
-                    ") ";
+            String  SQLQuery = "" +
+                    "SELECT *" +
+                    "FROM course INNER JOIN userCourse uC on course.courseID = uC.courseID  " +
+                    "WHERE userID = (?)";
             this.regStatement = conn.prepareStatement(SQLQuery);
             this.regStatement.setInt(1, userID);
             return this.findCourses();
@@ -86,7 +82,9 @@ public class View extends DBConnect {
         try {
             String SQLQuery = "SELECT * " +
                     "FROM posts " +
-                    "WHERE courseID = (?) AND (content LIKE (?) OR summary LIKE (?))";
+                    "WHERE courseID = (?) AND " +
+                    "(content LIKE (?) OR summary LIKE (?))";
+
             this.regStatement = conn.prepareStatement(SQLQuery);
             this.regStatement.setInt(1, courseID);
             this.regStatement.setString(2, "%" + searchInput + "%");
@@ -97,6 +95,25 @@ public class View extends DBConnect {
         }
         return null;
     }
+
+
+    //View posts that corresponds to both a course with courseID, a search input and is inside a specific folder
+    public List<Post> viewPosts(int courseID, int folderID) {
+        try {
+            String SQLQuery = "SELECT * " +
+                    "FROM posts INNER JOIN postFolder ON posts.postID = postFolder.postID   " +
+                    "WHERE courseID = (?) AND courseID = (?)";
+            this.regStatement = conn.prepareStatement(SQLQuery);
+            this.regStatement.setInt(1, courseID);
+            this.regStatement.setInt(2, folderID);
+
+            return this.findPosts(courseID);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     //both viewPosts methods call the findPost() to return a list of posts to a corresponding course with courseID
     private List<Post> findPosts(int courseID) {
         try {
