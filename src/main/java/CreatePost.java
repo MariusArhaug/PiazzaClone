@@ -42,7 +42,7 @@ public class CreatePost extends DBConnect {
         System.out.println("Post type: (Question, Note, Poll) ");
         String type = in.nextLine().toLowerCase();
         System.out.println("Folders: ");
-        int folderID = this.selectFolders(courseID);
+        int folderID = this.selectFolder(courseID);
         System.out.println("Summary: ");
         String summary = in.nextLine();
         System.out.println("Your question:  ");
@@ -106,13 +106,13 @@ public class CreatePost extends DBConnect {
         Scanner in = new Scanner(System.in);
         System.out.println("Folder name: ");
         String folderName = in.nextLine();
-        System.out.println("Super folder (select 0 for none) :  ");
-        int superFolderID = this.selectFolders(courseID);
+        System.out.println("Parent folder (select 0 for none) :  ");
+        int superFolderID = this.selectFolder(courseID);
         return this.insertFolder(courseID, folderName, superFolderID);
     }
 
-    //Select a folder(s) to corresponding course with courseID
-    private int selectFolders(int courseID) {
+    //Select a folder to corresponding course with courseID
+    public int selectFolder(int courseID) {
         Scanner in = new Scanner(System.in);
         List<Folder> courseFolders = this.view.viewCourseFolders(courseID);
         System.out.println(courseFolders
