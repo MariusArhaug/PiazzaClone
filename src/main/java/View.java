@@ -102,7 +102,7 @@ public class View extends DBConnect {
         try {
             String SQLQuery = "SELECT * " +
                     "FROM posts INNER JOIN postFolder ON posts.postID = postFolder.postID   " +
-                    "WHERE courseID = (?) AND courseID = (?)";
+                    "WHERE courseID = (?) AND folderID = (?)";
             this.regStatement = conn.prepareStatement(SQLQuery);
             this.regStatement.setInt(1, courseID);
             this.regStatement.setInt(2, folderID);
@@ -125,9 +125,9 @@ public class View extends DBConnect {
                 String summary = rs.getString("summary");
                 String content = rs.getString("summary");
                 int likes = rs.getInt("likes");
-                boolean allowAnonymous = rs.getBoolean("allowAnonymous");
+                boolean isAnonymous = rs.getBoolean("isAnonymous");
                 int userID = rs.getInt("userID");
-                posts.add(new Post(postID, type, summary, content, likes, allowAnonymous, courseID, userID));
+                posts.add(new Post(postID, type, summary, content, likes, isAnonymous, courseID, userID));
             }
             return posts;
         } catch (Exception e) {
