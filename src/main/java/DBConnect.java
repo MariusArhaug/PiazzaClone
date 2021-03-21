@@ -1,4 +1,5 @@
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 //Connect us to our mySQL database hosted at NTNU's server, we need VPN to make this connection work.
 public class DBConnect {
