@@ -104,7 +104,7 @@ public class CreatePost extends DBConnect {
         }
     }
 
-    //Interface for users to create a folder with required fieldss
+    //Interface for users to create a folder with required fields
     public Folder createFolder(int courseID) {
         Scanner in = new Scanner(System.in);
         System.out.println("Folder name: ");
@@ -128,7 +128,7 @@ public class CreatePost extends DBConnect {
                     .map(e -> Integer.toString(e.getFolderID()))
                     .collect(Collectors.joining(", ")) + "]");
             int folderID = Integer.parseInt(in.nextLine());
-            if (courseFolders.stream().anyMatch(e -> e.getFolderID() == folderID)) {
+            if (courseFolders.stream().anyMatch(e -> e.getFolderID() == folderID) || folderID == 0) {
                 return folderID;
             }
             System.out.println("You must choose correct folder ID!");

@@ -1,5 +1,4 @@
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -122,10 +121,7 @@ public class MainController {
             if (this.user.isInstructor()) {
                 //======= View Stats =================//
                 System.out.println("Do you want to view user statistics? (y/n)");
-                if (yes()) {
-                    List<Map<String, Integer[]>> stats = this.stats.getStats();
-                    this.stats.printStats(stats);
-                }
+                if (yes()) this.stats.printStats(this.stats.getStats());
                 //======= Create Folder ==============//
                 System.out.println("Do you want to create folders for this course? (y/n)");
                 if (yes()) {
