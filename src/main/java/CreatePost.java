@@ -54,7 +54,7 @@ public class CreatePost extends DBConnect {
         boolean isAnonymous = false;
         if (allowAnonymous) {
             System.out.println("Anonymous? (y/n):  ");
-            isAnonymous = in.nextLine().equalsIgnoreCase("y");
+            isAnonymous = MainController.yes();
         }
         //Once all the info about the post is gathered, create new post
         return this.insertPost(type, summary, content, isAnonymous, folderID, courseID, userID);

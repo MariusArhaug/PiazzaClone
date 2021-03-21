@@ -48,7 +48,7 @@ public class Login extends DBConnect {
     public User loginUser() {
         Scanner in = new Scanner(System.in);
         System.out.println("It appears that you're not logged in, please log in.");
-        System.out.println("------------------Login----------------");
+        System.out.println("-------------------------Login-------------------------");
         System.out.println("Email: ");
         String email = in.nextLine();
         System.out.println("Password: ");

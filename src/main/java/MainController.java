@@ -25,7 +25,7 @@ public class MainController {
 
     //Main start tp the program
     public void startProgram() {
-        System.out.println("-----------Welcome to Piazza-----------");
+        System.out.println("-------------------Welcome to Piazza-------------------");
         if (this.user == null) {
             this.user = this.loginUser();
         }
@@ -246,7 +246,7 @@ public class MainController {
             reply = replyPost.newReply(thread.getThreadID(), this.user, content, false);
         } else {
             System.out.println("Anonymous? (y/n)");
-            reply = replyPost.newReply(thread.getThreadID(), this.user, content, in.nextLine().equalsIgnoreCase("y"));
+            reply = replyPost.newReply(thread.getThreadID(), this.user, content, yes());
         }
         this.user.increasePostsViewed();
         this.user.increasePostsCreated();
