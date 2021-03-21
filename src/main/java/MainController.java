@@ -55,11 +55,11 @@ public class MainController {
     private void chooseCourse() {
         Scanner in = new Scanner(System.in);
         List<Course> courses = this.view.viewCourses();
-        System.out.println("All current courses: ");
+        System.out.println("All available courses on Piazza: ");
         System.out.println(courses
                 .stream()
                 .map(e -> e.getName() + " ID: " + e.getCourseID())
-                .collect(Collectors.joining(" "))
+                .collect(Collectors.joining(" ")) + "\n"
         );
         //See a users courses that he is registered for.
         List<Course> registeredCourses = this.view.viewRegisteredCourses(this.user.getUserID());
@@ -216,8 +216,14 @@ public class MainController {
             return;
         }
         Scanner in = new Scanner(System.in);
-        System.out.println("Select a post you want to reply to: ");
-        int postID = Integer.parseInt(in.nextLine());
+        int postID = 0;
+        while (true) {
+            System.out.println("Select a post nr you want to reply to: ");
+            postID = Integer.parseInt(in.nextLine());
+            int finalPostID = postID;
+            if (posts.stream().anyMatch(e -> e.getPostID() == finalPostID)) break;
+            System.out.println("You have to choose a valid post nr!");
+        }
         System.out.println("Your reply: ");
         String content = in.nextLine();
 
@@ -230,7 +236,7 @@ public class MainController {
         if (threads.isEmpty()) {
             String type = (this.user.isInstructor() ? "Instructor" : "Student") + " answer";
             thread = replyPost.newThread(postID, type);
-            System.out.println("You created a new" + type + " !");
+            System.out.println("You created a new " + type + "!");
         } else {
             //Reply to a discussion
             System.out.println("You replied to a discussion");

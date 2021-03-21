@@ -48,7 +48,7 @@ public class CreatePost extends DBConnect {
         int folderID = this.selectFolder(courseID);
         System.out.println("Summary: ");
         String summary = in.nextLine();
-        System.out.println("Your question:  ");
+        System.out.println("Details:  ");
 
         String content = in.nextLine();
         boolean isAnonymous = false;
@@ -56,24 +56,25 @@ public class CreatePost extends DBConnect {
             System.out.println("Anonymous? (y/n):  ");
             isAnonymous = MainController.yes();
         }
+
         //Once all the info about the post is gathered, create new post
         return this.insertPost(type, summary, content, isAnonymous, folderID, courseID, userID);
     }
 
     //Insert new post into database and return the post as a Post object.
-    private Post insertPost(String type, String summary, String content, boolean allowAnonymous, int folderID, int courseID, int userID) {
+    private Post insertPost(String type, String summary, String content, boolean isAnonymous, int folderID, int courseID, int userID) {
         try {
             String SQLQuery = "" +
-                    "INSERT INTO posts (type, summary, content, allowAnonymous, userID, courseID) " +
+                    "INSERT INTO posts (type, summary, content, isAnonymous, userID, courseID) " +
                     "VALUES ((?), (?), (?), (?), (?), (?))";
             this.regStatement = conn.prepareStatement(SQLQuery, Statement.RETURN_GENERATED_KEYS);
 
             this.regStatement.setString(1, type);
             this.regStatement.setString(2, summary);
             this.regStatement.setString(3, content);
-            this.regStatement.setBoolean(4, allowAnonymous);
-            this.regStatement.setInt(5, courseID);
-            this.regStatement.setInt(6, userID);
+            this.regStatement.setBoolean(4, isAnonymous);
+            this.regStatement.setInt(5, userID);
+            this.regStatement.setInt(6, courseID);
             this.regStatement.executeUpdate();
             ResultSet rs = regStatement.getGeneratedKeys();
             int postID = 0;
@@ -82,7 +83,7 @@ public class CreatePost extends DBConnect {
                 postID = Math.toIntExact(rs.getLong(1));
             }
             this.addPostToFolder(postID, folderID);
-            return new Post(postID, type, summary, content, 0, allowAnonymous, courseID, userID);
+            return new Post(postID, type, summary, content, 0, isAnonymous, courseID, userID);
         } catch (Exception e) {
             System.out.println();
         }
