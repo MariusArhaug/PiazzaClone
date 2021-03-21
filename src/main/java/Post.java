@@ -23,15 +23,16 @@ public class Post {
     }
 
     public String toString() {
-        return  "================================" + "\n" +
-                "Post nr: " + this.postID + "\n" +
-                "================================" + "\n" +
-                "Type: " + this.type + "\n" +
-                "Summary: " + this.summary + "\n" +
-                "----Content----" + "\n" +
-                this.content + "\n" +
-                "Likes: " + this.likes + "\n" +
-                "By: " + (this.allowAnonymous ? this.userID : "Anon") + "\n" +
-                "================================" + "\n";
+        return  "|===========================|" + "\n" +
+                "| Post nr: " + this.postID + "\n" +
+                "|===========================|" + "\n" +
+                "| Type: " + this.type + "\n" +
+                "| Summary: " + this.summary + "\n" +
+                "|----Content----" + "\n" +
+                "| " + this.content + "\n| \n" +
+                "|---------------" + "\n" +
+                "| Likes: " + this.likes + "\n" +
+                "| By: " + (this.allowAnonymous ? this.userID : "Anon") + "\n" +
+                "| ==========================|" + "\n";
     }
 }
