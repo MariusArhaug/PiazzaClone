@@ -44,6 +44,7 @@ public class Login extends DBConnect {
         return null;
     }
 
+
     //Interface to fill in user info.
     public User loginUser() {
         Scanner in = new Scanner(System.in);
