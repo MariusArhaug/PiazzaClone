@@ -45,9 +45,7 @@ public class MainController {
             while (true) {
                 user = this.register.registerUser();
 
-                if (user != null) {
-                    break;
-                }
+                if (user != null) break;
                 System.out.println("An error has occurred! Please try again: ");
             }
         }
@@ -111,18 +109,14 @@ public class MainController {
                 System.out.println("You created a new post: ");
                 System.out.println(newPost);
                 this.user.increasePostsCreated();
-
             }
 
             System.out.println("Do you want to look for posts inside a folder? (y/n)");
-            if (yes());
-                this.getPostInFolder();
+            if (yes()) this.getPostInFolder();
 
             //=====Reply to post=====//
             System.out.println("Do you want to select/reply to a post? (y/n)");
-            if (yes()) {
-                this.replyToPost();
-            }
+            if (yes()) this.replyToPost();
 
             //=====View stats / Create folder / invite users=====//
             if (this.user.isInstructor()) {
@@ -142,16 +136,12 @@ public class MainController {
                 }
                 //======= Invite users ==============//
                 System.out.println("Do you want to invite students to this course? (y/n)");
-                if (yes()) {
-                    this.register.registerUserToCourse(this.course.getCourseID());
-                }
+                if (yes()) this.register.registerUserToCourse(this.course.getCourseID());
             }
 
             //=====Search for posts=====//
             System.out.println("Do you want to search for a post? (y/n)");
-            if (yes()) {
-               this.search();
-            }
+            if (yes()) this.search();
 
             //=====Log out=====//
             System.out.println("Do you want to log out? (y/n)");
@@ -171,9 +161,8 @@ public class MainController {
     public void getPostInFolder() {
         int folderID = this.createPost.selectFolder(this.course.getCourseID());
         List<Post> posts = this.view.viewPosts(this.course.getCourseID(), folderID);
-        if (posts.isEmpty()) {
-            System.out.println("It appears that the folder has no posts yet!");
-        } else {
+        if (posts.isEmpty()) System.out.println("It appears that the folder has no posts yet!");
+        else {
             System.out.println(posts
                     .stream()
                     .map(Object::toString)
