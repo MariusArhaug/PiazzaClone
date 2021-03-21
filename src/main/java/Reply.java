@@ -24,7 +24,7 @@ public class Reply {
                 "======================" + "\n" +
                 "----Content----" + "\n" +
                 this.contents + "\n" +
-                "By: " + (this.isAnonymous ? "Anon" : this.userID) + "\n" +
+                "By: " + (this.isAnonymous ? "Anon" : "UserID: " + this.userID) + "\n" +
                 "================================" + "\n";
     }
 }
