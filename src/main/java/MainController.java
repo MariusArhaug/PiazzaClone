@@ -39,7 +39,9 @@ public class MainController {
         User user = this.login.loginUser();
         //If we don't find user in db we get user = null
         if (user == null) {
-            System.out.println("This account does not exist yet! Please register");
+            System.out.println("This account does not exist yet!");
+            System.out.println("Please register new account:");
+            System.out.println("================================");
             while (true) {
                 user = this.register.registerUser();
 
@@ -64,30 +66,39 @@ public class MainController {
         );
         //See a users courses that he is registered for.
         List<Course> registeredCourses = this.view.viewRegisteredCourses(this.user.getUserID());
-        System.out.println("All registered courses: ");
-        System.out.println(registeredCourses
-                .stream()
-                .map(e -> e.getName() + " ID: " + e.getCourseID())
-                .collect(Collectors.joining(" "))
-        );
-        while (true) {
-            //Make sure that user selects right courseID (only courses that he is registered for)
-            System.out.println("Select a courseID: [" + registeredCourses
+
+        if (registeredCourses == null) {
+            System.out.println("It appears that you're not registered for any course yet! ");
+        } else {
+
+            System.out.println("All registered courses: ");
+            System.out.println(registeredCourses
                     .stream()
-                    .map(e -> Integer.toString(e.getCourseID()))
-                    .collect(Collectors.joining(", ")) + "]");
-            int courseID = Integer.parseInt(in.nextLine());
-            if (registeredCourses.stream().anyMatch(e -> e.getCourseID() == courseID)) {
-                this.course = createPost.selectCourse(courseID);
-                break;
+                    .map(e -> e.getName() + " ID: " + e.getCourseID())
+                    .collect(Collectors.joining(" "))
+            );
+            while (true) {
+                //Make sure that user selects right courseID (only courses that he is registered for)
+                System.out.println("Select a courseID: [" + registeredCourses
+                        .stream()
+                        .map(e -> Integer.toString(e.getCourseID()))
+                        .collect(Collectors.joining(", ")) + "]");
+                int courseID = Integer.parseInt(in.nextLine());
+                if (registeredCourses.stream().anyMatch(e -> e.getCourseID() == courseID)) {
+                    this.course = createPost.selectCourse(courseID);
+                    break;
+                }
+                System.out.println("You are not registered for this course!");
             }
-            System.out.println("You are not registered for this course!");
         }
+    }
+    public static boolean yes() {
+        Scanner in = new Scanner(System.in);
+        return in.nextLine().equalsIgnoreCase("y");
     }
 
     //Main hub for different actions a student or instructor may choose
     private void selectAction() {
-        Scanner in = new Scanner(System.in);
         System.out.println("======== | Welcome to: " + this.course + " | ========");
         //Keep user inside of "Piazza" until he/she wants to log out.
         while (true) {
@@ -95,50 +106,56 @@ public class MainController {
 
             //=====Create post=====//
             System.out.println("Do you want create a post? (y/n)");
-            if (in.nextLine().equalsIgnoreCase("y")) {
+            if (yes()) {
                 Post newPost = createPost.createPost(this.course.getCourseID(), this.user.getUserID(), this.course.allowAnonymous());
                 System.out.println("You created a new post: ");
                 System.out.println(newPost);
                 this.user.increasePostsCreated();
+
             }
+
+            System.out.println("Do you want to look for posts inside a folder? (y/n)");
+            if (yes());
+                this.getPostInFolder();
+
             //=====Reply to post=====//
             System.out.println("Do you want to select/reply to a post? (y/n)");
-            if (in.nextLine().equalsIgnoreCase("y")) {
+            if (yes()) {
                 this.replyToPost();
-                this.user.increasePostsViewed();
             }
 
             //=====View stats / Create folder / invite users=====//
             if (this.user.isInstructor()) {
+                //======= View Stats =================//
                 System.out.println("Do you want to view user statistics? (y/n)");
-                if (in.nextLine().equalsIgnoreCase("y")) {
+                if (yes()) {
                     List<Map<String, Integer[]>> stats = this.stats.getStats();
                     this.stats.printStats(stats);
                 }
-
+                //======= Create Folder ==============//
                 System.out.println("Do you want to create folders for this course? (y/n)");
-                if (in.nextLine().equalsIgnoreCase("y")) {
+                if (yes()) {
                     Folder newFolder = this.createPost.createFolder(this.course.getCourseID());
                     System.out.println("======================================");
                     System.out.println("| New folder created! " + newFolder + " |");
                     System.out.println("======================================");
                 }
-
+                //======= Invite users ==============//
                 System.out.println("Do you want to invite students to this course? (y/n)");
-                if (in.nextLine().equalsIgnoreCase(("y"))) {
+                if (yes()) {
                     this.register.registerUserToCourse(this.course.getCourseID());
                 }
             }
 
             //=====Search for posts=====//
             System.out.println("Do you want to search for a post? (y/n)");
-            if (in.nextLine().equalsIgnoreCase("y")) {
+            if (yes()) {
                this.search();
             }
 
             //=====Log out=====//
             System.out.println("Do you want to log out? (y/n)");
-            if (in.nextLine().equalsIgnoreCase("y")) {
+            if (yes()) {
                 //If we have updated a state in the current user object we need to update the database
                 if (this.user.hasUpdated()) {
                     this.login.updateUser(this.user);
@@ -147,6 +164,21 @@ public class MainController {
                 System.out.println("Bye bye " + this.user.getName() + "!");
                 break;
             }
+        }
+    }
+
+    //Find posts that belong to a specific folder
+    public void getPostInFolder() {
+        int folderID = this.createPost.selectFolder(this.course.getCourseID());
+        List<Post> posts = this.view.viewPosts(this.course.getCourseID(), folderID);
+        if (posts.isEmpty()) {
+            System.out.println("It appears that the folder has no posts yet!");
+        } else {
+            System.out.println(posts
+                    .stream()
+                    .map(Object::toString)
+                    .collect(Collectors.joining("\n")));
+            this.user.increasePostsViewed();
         }
     }
 
@@ -194,6 +226,10 @@ public class MainController {
     //Reply to post
     private void replyToPost() {
         this.printPosts(this.course.getCourseID());
+        List<Post> posts = this.view.viewPosts(this.course.getCourseID());
+        if (posts.isEmpty()) {
+            return;
+        }
         Scanner in = new Scanner(System.in);
         System.out.println("Select a post you want to reply to: ");
         int postID = Integer.parseInt(in.nextLine());
@@ -211,6 +247,7 @@ public class MainController {
             thread = replyPost.newThread(postID, type);
             System.out.println("You created a new" + type + " !");
         } else {
+            //Reply to a discussion
             System.out.println("You replied to a discussion");
             thread = replyPost.newThread(postID, "Discussion");
         }
@@ -222,6 +259,8 @@ public class MainController {
             System.out.println("Anonymous? (y/n)");
             reply = replyPost.newReply(thread.getThreadID(), this.user, content, in.nextLine().equalsIgnoreCase("y"));
         }
+        this.user.increasePostsViewed();
+        this.user.increasePostsCreated();
         System.out.println("Your reply: ");
         System.out.println(reply);
     }
