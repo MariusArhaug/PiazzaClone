@@ -45,16 +45,22 @@ public class Register extends DBConnect {
 
     //Interface for user to register a new user-account. Returns the new user as a User object.
     public User registerUser() {
-        Scanner in = new Scanner(System.in);
-        System.out.println("Name: ");
-        String name = in.nextLine();
-        System.out.println("Email: ");
-        String email = in.nextLine();
-        System.out.println("Password: ");
-        String password = Register.hashPassword(in.nextLine());
-        System.out.println("Instructor: (y/n)");
-        boolean isInstructor = in.nextLine().equalsIgnoreCase("y");
-        return this.insertUser(name, email, password, isInstructor);
+        while (true) {
+            Scanner in = new Scanner(System.in);
+            System.out.println("Name: ");
+            String name = in.nextLine();
+            System.out.println("Email: ");
+            String email = in.nextLine();
+            System.out.println("Password: ");
+            String password = Register.hashPassword(in.nextLine());
+            System.out.println("Instructor: (y/n)");
+            boolean isInstructor = in.nextLine().equalsIgnoreCase("y");
+            if (name.equals("") || email.equals("") || password.equals("")) {
+                System.out.println("You must fill out every field! Name, email and password!");
+                continue;
+            }
+            return this.insertUser(name, email, password, isInstructor);
+        }
     }
 
     //Insert the new user into the database. Return the newly registered user as a User object.
@@ -87,6 +93,10 @@ public class Register extends DBConnect {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void registerToCourse(int userID, int courseID) {
+        this.insertUserToCourse(userID, courseID);
     }
 
     //Instructor can register a user to a chosen course with courseID
