@@ -1,4 +1,5 @@
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Scanner;
 
 //Log user in to program, and update user values in database.

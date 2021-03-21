@@ -1,4 +1,7 @@
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -119,11 +122,17 @@ public class CreatePost extends DBConnect {
                 .stream()
                 .map(Folder::toString)
                 .collect(Collectors.joining(" ")));
-        System.out.println("Select a folder: [" + courseFolders
-                .stream()
-                .map(e -> Integer.toString(e.getFolderID()))
-                .collect(Collectors.joining(", ")) + "]");
-        return Integer.parseInt(in.nextLine());
+        while (true) {
+            System.out.println("Select a folder: [" + courseFolders
+                    .stream()
+                    .map(e -> Integer.toString(e.getFolderID()))
+                    .collect(Collectors.joining(", ")) + "]");
+            int folderID = Integer.parseInt(in.nextLine());
+            if (courseFolders.stream().anyMatch(e -> e.getFolderID() == folderID)) {
+                return folderID;
+            }
+            System.out.println("You must choose correct folder ID!");
+        }
     }
 
     //Insert new folder into database and return the folder as a folder object.

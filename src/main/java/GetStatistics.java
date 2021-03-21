@@ -1,6 +1,9 @@
-
-import java.sql.*;
-import java.util.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 //Get user statistics from database and print them into to understandable text.
 public class GetStatistics extends DBConnect {
