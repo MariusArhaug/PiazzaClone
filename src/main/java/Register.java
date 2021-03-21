@@ -97,9 +97,6 @@ public class Register extends DBConnect {
         return null;
     }
 
-    public void registerToCourse(int userID, int courseID) {
-        this.insertUserToCourse(userID, courseID);
-    }
 
     //Instructor can register a user to a chosen course with courseID
     public void registerUserToCourse(int courseID) {
