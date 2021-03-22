@@ -31,6 +31,7 @@ public class MainController {
         System.out.println("Success! Welcome " +  this.user.getName() + "!");
         this.chooseCourse();
         this.selectAction();
+        this.logout();
     }
 
     //Interface to log in user.
@@ -110,6 +111,7 @@ public class MainController {
                 this.user.increasePostsCreated();
             }
 
+            //=====Look for post in folders===//
             System.out.println("Do you want to look for posts inside a folder? (y/n)");
             if (yes()) this.getPostInFolder();
 
@@ -141,15 +143,7 @@ public class MainController {
 
             //=====Log out=====//
             System.out.println("Do you want to log out? (y/n)");
-            if (yes()) {
-                //If we have updated a state in the current user object we need to update the database
-                if (this.user.hasUpdated()) {
-                    this.login.updateUser(this.user);
-                    System.out.println("New stats saved!");
-                }
-                System.out.println("Bye bye " + this.user.getName() + "!");
-                break;
-            }
+            if (yes()) break;
         }
     }
 
@@ -179,9 +173,7 @@ public class MainController {
             if (posts.isEmpty()) {
                 System.out.println("It appears that there are currently no existing posts with this input!");
                 System.out.println("Do you want to try again? (y/n)");
-                if (in.nextLine().equalsIgnoreCase("y")) {
-                    continue;
-                }
+                if (yes()) continue;
                 break;
             }
             System.out.println("Found " + posts.size() + " posts!");
@@ -208,6 +200,16 @@ public class MainController {
                     .collect(Collectors.joining("\n")));
         }
     }
+
+    //If we have updated a state in the current user object we need to update the database
+    private void logout() {
+        if (this.user.hasUpdated()) {
+            this.login.updateUser(this.user);
+            System.out.println("New stats saved!");
+        }
+        System.out.println("Bye bye " + this.user.getName() + "!");;
+    }
+
 
     //Reply to post
     public void replyToPost() {
