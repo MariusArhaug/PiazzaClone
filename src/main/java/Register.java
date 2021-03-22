@@ -111,12 +111,23 @@ public class Register extends DBConnect {
                 .stream()
                 .map(User::toString)
                 .collect(Collectors.joining(" ")));
-        System.out.println("Select an studentID you want to invite to this course:");
-        System.out.println("Student ID: [" + users
-                .stream()
-                .map(e -> Integer.toString(e.getUserID()))
-                .collect(Collectors.joining(", ")) + "]");
-        int userID = Integer.parseInt(in.nextLine());
+        int userID;
+        while (true) {
+            System.out.println("Select an studentID you want to invite to this course:");
+            System.out.println("Student ID: [" + users
+                    .stream()
+                    .map(e -> Integer.toString(e.getUserID()))
+                    .collect(Collectors.joining(", ")) + "]");
+            userID = Integer.parseInt(in.nextLine());
+            int finalUserID = userID;
+            if (users.stream().anyMatch(e -> e.getUserID() == finalUserID)) break;
+            System.out.println("You must choose a valid user ID!");
+        }
+        int finalUserID1 = userID;
+        System.out.println("User" + users.stream()
+                .filter(e -> e.getUserID() == finalUserID1)
+                .map(Object::toString) + " has been invited!");
+
         this.insertUserToCourse(userID, courseID);
     }
 
