@@ -24,6 +24,19 @@ public class Post {
 
     }
 
+    public static String reformatContent(String content) {
+        String[] words = content.split(" ");
+        String reformatedContent = "";
+        for (String word : words) {
+            if ((reformatedContent + word).length() < 30) {
+            reformatedContent +=  word + " ";
+            } else {
+                reformatedContent +=  "\n";
+            }
+        }
+        return reformatedContent;
+    }
+
     public int getPostID() {
         return this.postID;
     }
@@ -35,9 +48,9 @@ public class Post {
                 "|===========================|" + "\n" +
                 "| Type: " + this.type + "\n" +
                 "| Summary: " + this.summary + "\n" +
-                "|----Content----" + "\n" +
-                "| " + this.content + "\n| \n" +
-                "|---------------" + "\n" +
+                "| Details: -----------------|" + "\n" +
+                "| " + reformatContent(this.content) + "\n| \n" +
+                "|---------------------------|" + "\n" +
                 "| Likes: " + this.likes + "\n" +
                 "| By: " + (this.isAnonymous ? "Anon" : "User ID: " + this.userID) + "\n" +
                 "| ==========================|" + "\n";

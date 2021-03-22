@@ -23,7 +23,7 @@ public class Reply {
                 "Reply nr: " + this.replyID + "\n" +
                 "======================" + "\n" +
                 "----Content----" + "\n" +
-                this.contents + "\n" +
+                Post.reformatContent(this.contents) + "\n" +
                 "By: " + (this.isAnonymous ? "Anon" : "UserID: " + this.userID) + "\n" +
                 "================================" + "\n";
     }
