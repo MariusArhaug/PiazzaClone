@@ -1,5 +1,6 @@
-
-//Course class that lets us store different data about a course.
+/**
+ * Course class that lets us store different data about a course.
+ */
 public class Course {
     private final int courseID;
     private final String name;

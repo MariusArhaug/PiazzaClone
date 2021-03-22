@@ -14,7 +14,14 @@ public class ReplyPost extends DBConnect {
         super.connect();
     }
 
-    //Reply to a post with a specific threadID.
+    /**
+     * Reply to a thread and insert into the database
+     * @param threadID ID of thread we want to reply to
+     * @param user who has made reply
+     * @param contents details of the reply
+     * @param isAnonymous whether the reply is anonymous or not
+     * @return Reply object.
+     */
     public Reply newReply(int threadID, User user, String contents, boolean isAnonymous) {
         try {
             String SQLQuery =
@@ -40,7 +47,12 @@ public class ReplyPost extends DBConnect {
         return null;
     }
 
-    //Create a new thread for replies.
+    /**
+     * Create and insert new thread into database
+     * @param postID ID of the post the thread belongs to
+     * @param type The type of thread that's been made; Instructor/Student/Discussion
+     * @return Thread object.
+     */
     public Thread newThread(int postID, String type) {
         try {
             String SQLQuery =
@@ -61,6 +73,12 @@ public class ReplyPost extends DBConnect {
         return  null;
     }
 
+    /**
+     * Select thread we want to reply to.
+     * @param postID ID of post we want to find thread for
+     * @param isInstructor boolean if user is instructor or not.
+     * @return thread
+     */
     public Thread selectThread(int postID, boolean isInstructor) {
         Scanner in = new Scanner(System.in);
         List<Thread> threads = this.view.viewThreads(postID);
@@ -101,6 +119,10 @@ public class ReplyPost extends DBConnect {
         }
     }
 
+    /**
+     * Print out threads and their corresponding trail of replies.
+     * @param threads list of Thread objects.
+     */
     private void printThreads(List<Thread> threads) {
         System.out.println("Threads: " + threads
                 .stream()

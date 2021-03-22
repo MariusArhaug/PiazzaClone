@@ -9,14 +9,17 @@ import java.util.stream.Collectors;
 //Lets users createPosts, add them to folders, and create folders.
 public class CreatePost extends DBConnect {
 
-    //Initialize class
     private final View view = new View();
     private PreparedStatement regStatement;
     public CreatePost() {
         super.connect();
     }
 
-    //Select course based on user input and return as a new Course object
+    /**
+     * Select course based on user input and return as a new Course object
+     * @param courseID the ID of the course we want
+     * @return Course object
+     */
     public Course selectCourse(int courseID) {
         try {
             String SQLQuery = "SELECT * " +
@@ -37,7 +40,12 @@ public class CreatePost extends DBConnect {
         return null;
     }
 
-    //Interface for user to create a post
+    /**
+     * User TUI for filling in form
+     * @param course which course the post belongs to
+     * @param user who created the post
+     * @return Post object
+     */
     public Post createPost(Course course, User user) {
         Scanner in = new Scanner(System.in);
         System.out.println("-------Make new post------");
@@ -61,7 +69,17 @@ public class CreatePost extends DBConnect {
         return this.insertPost(type, summary, content, isAnonymous, folderID, course.getCourseID(), user.getUserID());
     }
 
-    //Insert new post into database and return the post as a Post object.
+    /**
+     * Insert new post into database and return the post as a Post object.
+     * @param type type of post (Question, Note, Poll)
+     * @param summary Short summary
+     * @param content details
+     * @param isAnonymous is anonymous or not
+     * @param folderID ID the folder it belongs to
+     * @param courseID ID of the course it belongs to
+     * @param userID ID of creator.
+     * @return Post object.
+     */
     private Post insertPost(String type, String summary, String content, boolean isAnonymous, int folderID, int courseID, int userID) {
         try {
             String SQLQuery = "" +
@@ -90,7 +108,11 @@ public class CreatePost extends DBConnect {
         return null;
     }
 
-    //Add post to selected folder
+    /**
+     * Add post to selected folder
+     * @param postID ID of the post
+     * @param folderID ID of folder
+     */
     private void addPostToFolder(int postID, int folderID) {
         try {
             String SQLQuery = "" +
@@ -105,7 +127,11 @@ public class CreatePost extends DBConnect {
         }
     }
 
-    //Interface for users to create a folder with required fields
+    /**
+     * Interface for users to create a folder with required fields
+     * @param courseID ID of the course it belongs to
+     * @return Folder object.
+     */
     public Folder createFolder(int courseID) {
         Scanner in = new Scanner(System.in);
         System.out.println("Folder name: ");
@@ -115,7 +141,11 @@ public class CreatePost extends DBConnect {
         return this.insertFolder(courseID, folderName, superFolderID);
     }
 
-    //Select a folder to corresponding course with courseID
+    /**
+     * Select a folder to corresponding course with courseID
+     * @param courseID ID of the course it belonggs to
+     * @return ID of folder.
+     */
     public int selectFolder(int courseID) {
         Scanner in = new Scanner(System.in);
         List<Folder> courseFolders = this.view.viewCourseFolders(courseID);
@@ -136,7 +166,13 @@ public class CreatePost extends DBConnect {
         }
     }
 
-    //Insert new folder into database and return the folder as a folder object.
+    /**
+     * Insert new folder into database and return the folder as a folder object.
+     * @param courseID ID of course it belongs to
+     * @param folderName Name of the folder
+     * @param superFolderID Parent folder if it is a subfolder.
+     * @return Folder object.
+     */
     private Folder insertFolder(int courseID, String folderName, int superFolderID) {
         try {
             String SQLQuery = "" +

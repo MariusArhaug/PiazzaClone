@@ -24,6 +24,11 @@ public class Post {
 
     }
 
+    /**
+     * Format string so that it fits inside the toString method of a post
+     * @param content string to format
+     * @return formatted string
+     */
     public static String reformatContent(String content) {
         StringBuilder sb = new StringBuilder(content);
         int i = 0;

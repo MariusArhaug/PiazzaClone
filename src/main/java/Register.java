@@ -19,8 +19,11 @@ public class Register extends DBConnect {
         super.connect();
     }
 
-    //Hash passwords, cause why not?
-    //get a cleartext password as argument and return a MD5 hashed password.
+    /**
+     * Hash password
+     * @param passwordToHash cleartext password
+     * @return hashed password
+     */
     public static String hashPassword(String passwordToHash) {
         String generatedPassword = null;
         try {
@@ -45,7 +48,10 @@ public class Register extends DBConnect {
         return generatedPassword;
     }
 
-    //Interface for user to register a new user-account. Returns the new user as a User object.
+    /**
+     * Interface for user form
+     * @return User object.
+     */
     public User registerUser() {
         while (true) {
             Scanner in = new Scanner(System.in);
@@ -65,7 +71,14 @@ public class Register extends DBConnect {
         }
     }
 
-    //Insert the new user into the database. Return the newly registered user as a User object.
+    /**
+     * Insert new user into database
+     * @param name username
+     * @param email user email
+     * @param password password
+     * @param isInstructor student/instructor
+     * @return User object.
+     */
     private User insertUser(String name, String email, String password, boolean isInstructor) {
         User existingUser = this.login.getUser(email, password);
 
@@ -98,7 +111,10 @@ public class Register extends DBConnect {
     }
 
 
-    //Instructor can register a user to a chosen course with courseID
+    /**
+     * Interface to register user to course
+     * @param courseID ID of course
+     */
     public void registerUserToCourse(int courseID) {
         Scanner in = new Scanner(System.in);
         List<User> users = this.view.viewUsersNotInCourse(courseID);
@@ -132,7 +148,11 @@ public class Register extends DBConnect {
         this.insertUserToCourse(userID, courseID);
     }
 
-    //Insert the new relation between a user and a course into the table userCourse in the database.
+    /**
+     * Insert user and course into userCourse table in database
+     * @param userID ID of user
+     * @param courseID ID of course.
+     */
     private void insertUserToCourse(int userID, int courseID) {
         try {
             String SQL = "INSERT INTO userCourse (userID, courseID) " +

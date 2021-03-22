@@ -5,7 +5,9 @@ import java.sql.DriverManager;
 public class DBConnect {
     protected Connection conn;
 
-    //Start connection
+    /**
+     * Connect to database.
+     */
     public void connect() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");

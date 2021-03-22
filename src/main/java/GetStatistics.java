@@ -14,7 +14,10 @@ public class GetStatistics extends DBConnect {
         super.connect();
     }
 
-    //Return statistiscs as a List of with name and corresponding values, posts created and viewed.
+    /**
+     * Get stats as a List of maps with name and corresponding values, posts created and
+     * @return List<Map<String, Integer[]>> Stats
+     */
     public List<Map<String, Integer[]>> getStats() {
         try {
             String SQL = "SElECT name, postsCreated, postsViewed " +
@@ -43,7 +46,10 @@ public class GetStatistics extends DBConnect {
         }
     }
 
-    //Print List of maps into a user readable text.
+    /**
+     * Print List of maps into a user readable text.
+     * @param stats statistics.
+     */
     public void printStats(List<Map<String, Integer[]>> stats) {
         if (stats == null) {
             System.out.println("It appears that there are no current statistics available yet!");

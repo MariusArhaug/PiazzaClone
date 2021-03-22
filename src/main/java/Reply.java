@@ -19,12 +19,12 @@ public class Reply {
     }
 
     public String toString() {
-        return  "=======================" + "\n" +
-                "Reply nr: " + this.replyID + "\n" +
-                "======================" + "\n" +
-                "----Content----" + "\n" +
+        return  "|===========================|" + "\n" +
+                "| Reply nr: " + this.replyID + "\n" +
+                "|===========================|" + "\n" +
+                "| Details : ----------------|" + "\n" +
                 Post.reformatContent(this.contents) + "\n" +
-                "By: " + (this.isAnonymous ? "Anon" : "UserID: " + this.userID) + "\n" +
-                "================================" + "\n";
+                "| By: " + (this.isAnonymous ? "Anon" : "UserID: " + this.userID) + "\n" +
+                "|===========================|" + "\n";
     }
 }

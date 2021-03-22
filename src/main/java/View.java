@@ -12,7 +12,10 @@ public class View extends DBConnect {
         super.connect();
     }
 
-    //View all courses
+    /**
+     * View all courses
+     * @return List of courses
+     */
     public List<Course> viewCourses() {
         try {
             String SQLQuery = "" +
@@ -26,7 +29,11 @@ public class View extends DBConnect {
         return null;
     }
 
-    //View the courses that a user is registered for
+    /**
+     * View all courses that user is registered to
+     * @param userID ID of user
+     * @return List of courses
+     */
     public List<Course> viewRegisteredCourses(int userID) {
         try {
             String  SQLQuery = "" +
@@ -42,8 +49,10 @@ public class View extends DBConnect {
         return null;
     }
 
-    //Both viewCourses and viewRegisteredCourses use the same method to return of courses,
-    // depending on which method that fired findCourses()
+    /**
+     * Turn Result from SELECT into List of courses
+     * @return List of courses.
+     */
     private List<Course> findCourses() {
         try {
             ResultSet rs = this.regStatement.executeQuery();
@@ -62,7 +71,11 @@ public class View extends DBConnect {
         return null;
     }
 
-    //View posts to a corresponding course with courseID
+    /**
+     * View posts inside of a course
+     * @param courseID ID of course
+     * @return List of posts.
+     */
     public List<Post> viewPosts(int courseID) {
         try {
             String SQLQuery = "SELECT * " +
@@ -77,7 +90,12 @@ public class View extends DBConnect {
         return null;
     }
 
-    //View posts that corresponds to both a course with courseID as well as a user search input.
+    /**
+     * List of posts that are inside a course and match a searchInput
+     * @param courseID ID of course
+     * @param searchInput search input
+     * @return List of posts.
+     */
     public List<Post> viewPosts(int courseID, String searchInput) {
         try {
             String SQLQuery = "SELECT * " +
@@ -97,7 +115,12 @@ public class View extends DBConnect {
     }
 
 
-    //View posts that corresponds to both a course with courseID, a search input and is inside a specific folder
+    /**
+     * List of posts that are inside a course and folder
+     * @param courseID ID of course
+     * @param folderID ID of folder
+     * @return List of posts
+     */
     public List<Post> viewPosts(int courseID, int folderID) {
         try {
             //We're only interested in posts' attributes.
@@ -115,7 +138,11 @@ public class View extends DBConnect {
         return null;
     }
 
-    //both viewPosts methods call the findPost() to return a list of posts to a corresponding course with courseID
+    /**
+     * Query database and turn ResultSet into List of posts
+     * @param courseID ID of course
+     * @return List of posts
+     */
     private List<Post> findPosts(int courseID) {
         try {
             ResultSet rs = this.regStatement.executeQuery();
@@ -139,7 +166,11 @@ public class View extends DBConnect {
         return null;
     }
 
-    //View all the available folders for a given course with courseID
+    /**
+     * List of folders in a course
+     * @param courseID ID of course
+     * @return List of folders.
+     */
     public List<Folder> viewCourseFolders(int courseID) {
         if (courseID == 0) {
             throw new IllegalArgumentException("Course Not found");
@@ -167,7 +198,11 @@ public class View extends DBConnect {
         return null;
     }
 
-    //view the different threads to a specific post with postID
+    /**
+     * List of threads to a specific post
+     * @param postID ID of post
+     * @return List of threads.
+     */
     public List<Thread> viewThreads(int postID) {
         try {
             String SQLQuery = "SELECT * " +
@@ -195,6 +230,11 @@ public class View extends DBConnect {
         return null;
     }
 
+    /**
+     * List of replies to a specific thread
+     * @param threadID ID of thread
+     * @return List of reply.
+     */
     public List<Reply> viewRepliesInThread(int threadID) {
         try {
             String SQLQuery = "SELECT * " +
@@ -222,7 +262,11 @@ public class View extends DBConnect {
         return null;
     }
 
-    //View all users that are not registered to a specific course with courseID
+    /**
+     * List of all users that are not registered to a specific course with courseID
+     * @param courseID ID of course
+     * @return List of User
+     */
     public List<User> viewUsersNotInCourse(int courseID) {
         try {
             String SQLQuery = "SELECT * " +

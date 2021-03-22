@@ -11,7 +11,12 @@ public class Login extends DBConnect {
         super.connect();
     }
 
-    //Get user from database with corresponding email and password and return as a user object.
+    /**
+     * /Get user from database with corresponding email and password
+     * @param email user email.
+     * @param password user password
+     * @return User object
+     */
     public User getUser(String email, String password) {
         try {
             String SQLQuery = "SELECT * " +
@@ -45,7 +50,10 @@ public class Login extends DBConnect {
     }
 
 
-    //Interface to fill in user info.
+    /**
+     * Interface to fill in user info.
+     * @return User object.
+     */
     public User loginUser() {
         Scanner in = new Scanner(System.in);
         System.out.println("It appears that you're not logged in, please log in.");
@@ -57,7 +65,10 @@ public class Login extends DBConnect {
         return this.getUser(email, password);
     }
 
-    //Update user values if a user has done any action that indicates that these values have been updated.
+    /**
+     * Update user values in database.
+     * @param user User object.
+     */
     public void updateUser(User user) {
         try {
             String SQLQuery = "" +

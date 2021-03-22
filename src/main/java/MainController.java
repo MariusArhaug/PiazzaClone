@@ -201,7 +201,9 @@ public class MainController {
         }
     }
 
-    //Print posts to a corresponding course with courseID
+    /**
+     * Print posts to a corresponding course with courseID
+     */
     private void printPosts(int courseID) {
         System.out.println("Current posts:" );
         List<Post> posts = this.view.viewPosts(courseID);
@@ -215,17 +217,22 @@ public class MainController {
         }
     }
 
-    //If we have updated a state in the current user object we need to update the database
+    /**
+     * Logs out user and terminates program.
+     * If user has had his stats updated we need to update our database.
+     */
     private void logout() {
         if (this.user.hasUpdated()) {
             this.login.updateUser(this.user);
             System.out.println("New stats saved!");
         }
-        System.out.println("Bye bye " + this.user.getName() + "!");;
+        System.out.println("Bye bye " + this.user.getName() + "!");
     }
 
 
-    //Reply to post
+    /**
+     * Reply to a chosen post
+     */
     public void replyToPost() {
         this.printPosts(this.course.getCourseID());
         List<Post> posts = this.view.viewPosts(this.course.getCourseID());
@@ -248,6 +255,7 @@ public class MainController {
         }
 
         Thread thread = this.replyPost.selectThread(postID, this.user.isInstructor());
+        if (thread == null) return;
 
         System.out.println("Your reply: ");
         String content = in.nextLine();
