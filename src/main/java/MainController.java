@@ -104,7 +104,7 @@ public class MainController {
             //=====Create post=====//
             System.out.println("Do you want create a post? (y/n)");
             if (yes()) {
-                Post newPost = createPost.createPost(this.course.getCourseID(), this.user.getUserID(), this.course.allowAnonymous());
+                Post newPost = createPost.createPost(this.course, this.user);
                 System.out.println("You created a new post: ");
                 System.out.println(newPost);
                 this.user.increasePostsCreated();
@@ -209,14 +209,14 @@ public class MainController {
     }
 
     //Reply to post
-    private void replyToPost() {
+    public void replyToPost() {
         this.printPosts(this.course.getCourseID());
         List<Post> posts = this.view.viewPosts(this.course.getCourseID());
         if (posts.isEmpty()) {
             return;
         }
         Scanner in = new Scanner(System.in);
-        int postID = 0;
+        int postID;
         while (true) {
             System.out.println("Select a post nr you want to reply to: ");
             postID = Integer.parseInt(in.nextLine());
@@ -224,8 +224,6 @@ public class MainController {
             if (posts.stream().anyMatch(e -> e.getPostID() == finalPostID)) break;
             System.out.println("You have to choose a valid post nr!");
         }
-        System.out.println("Your reply: ");
-        String content = in.nextLine();
 
         //Find the threads related to the post we want to reply to.
         List<Thread> threads = view.viewThreads(postID);
@@ -238,10 +236,45 @@ public class MainController {
             thread = replyPost.newThread(postID, type);
             System.out.println("You created a new " + type + "!");
         } else {
-            //Reply to a discussion
-            System.out.println("You replied to a discussion");
-            thread = replyPost.newThread(postID, "Discussion");
+            //We need to display thread as well as replies in that thread.
+            System.out.println("Threads: " + threads
+                    .stream()
+                    .filter(e -> !e.getType().contains("answer"))
+                    .map(e -> e.toString() + this.view.viewRepliesInThread(e.getThreadID())
+                            .stream()
+                            .map(a ->  a
+                                    .toString()
+                                    .replaceAll("(?m)^", "\t"))
+                            .collect(Collectors.joining("\n"))
+                    )
+                    .collect(Collectors.joining("\n")) + "\n" );
+
+            while (true) {
+                System.out.println("""
+                        Select a discussion you want to reply to.
+                        Press 0 to start a new discussion
+                        Press -1 If you don't want to reply""");
+                int threadID = Integer.parseInt(in.nextLine());
+
+                if (threads.stream().anyMatch(e -> e.getThreadID() == threadID )) {
+                    thread = replyPost.selectThread(threadID);
+                    break;
+                }
+                if (threadID == 0) {
+                    System.out.println("You started a new discussion");
+                    thread = replyPost.newThread(postID, "Discussion");
+                    break;
+                }
+                if (threadID == -1) {
+                    System.out.println("No reply created!");
+                    return;
+                }
+                System.out.println("You must select a valid thread nr! ");
+            }
         }
+        System.out.println("Your reply: ");
+        String content = in.nextLine();
+
         //Only users can select that they want their reply be anonymous
         Reply reply;
         if (this.user.isInstructor()) {
