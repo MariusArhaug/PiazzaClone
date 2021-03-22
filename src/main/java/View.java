@@ -77,7 +77,7 @@ public class View extends DBConnect {
         return null;
     }
 
-    //View posts that corresponds to both a course with courseID aswell as a user search input.
+    //View posts that corresponds to both a course with courseID as well as a user search input.
     public List<Post> viewPosts(int courseID, String searchInput) {
         try {
             String SQLQuery = "SELECT * " +
@@ -100,6 +100,7 @@ public class View extends DBConnect {
     //View posts that corresponds to both a course with courseID, a search input and is inside a specific folder
     public List<Post> viewPosts(int courseID, int folderID) {
         try {
+            //We're only interested in posts' attributes.
             String SQLQuery = "SELECT posts.* " +
                     "FROM posts INNER JOIN postFolder ON posts.postID = postFolder.postID   " +
                     "WHERE courseID = (?) AND folderID = (?)";
@@ -119,6 +120,8 @@ public class View extends DBConnect {
         try {
             ResultSet rs = this.regStatement.executeQuery();
             List<Post> posts = new ArrayList<>();
+
+            //We create Post objects that we return in the list
             while (rs.next()) {
                 int postID = rs.getInt("postID");
                 String type = rs.getString("type");
@@ -136,7 +139,7 @@ public class View extends DBConnect {
         return null;
     }
 
-    //View all the available folders for a given coruse with courseID
+    //View all the available folders for a given course with courseID
     public List<Folder> viewCourseFolders(int courseID) {
         if (courseID == 0) {
             throw new IllegalArgumentException("Course Not found");
@@ -175,6 +178,7 @@ public class View extends DBConnect {
             ResultSet rs = this.regStatement.executeQuery();
             List<Thread> threads = new ArrayList<>();
 
+            //We create thread objects that we return in the list
             while (rs.next()) {
                 int threadID = rs.getInt("threadID");
                 boolean isResolved = rs.getBoolean("isResolved");
@@ -201,6 +205,7 @@ public class View extends DBConnect {
             ResultSet rs = this.regStatement.executeQuery();
             List<Reply> replies = new ArrayList<>();
 
+            //We create reply objects that we return in the list
             while (rs.next()) {
                 int replyID = rs.getInt("replyID");
                 String contents = rs.getString("contents");
@@ -231,6 +236,8 @@ public class View extends DBConnect {
             this.regStatement.setInt(1, courseID);
             ResultSet rs = this.regStatement.executeQuery();
             List<User> users = new ArrayList<>();
+
+            //We create user objects that we return in the list
             while (rs.next()) {
                 int userID = rs.getInt("userID");
                 String[] strings = {
