@@ -100,7 +100,7 @@ public class View extends DBConnect {
     //View posts that corresponds to both a course with courseID, a search input and is inside a specific folder
     public List<Post> viewPosts(int courseID, int folderID) {
         try {
-            String SQLQuery = "SELECT * " +
+            String SQLQuery = "SELECT posts.* " +
                     "FROM posts INNER JOIN postFolder ON posts.postID = postFolder.postID   " +
                     "WHERE courseID = (?) AND folderID = (?)";
             this.regStatement = conn.prepareStatement(SQLQuery);
@@ -123,7 +123,7 @@ public class View extends DBConnect {
                 int postID = rs.getInt("postID");
                 String type = rs.getString("type");
                 String summary = rs.getString("summary");
-                String content = rs.getString("summary");
+                String content = rs.getString("content");
                 int likes = rs.getInt("likes");
                 boolean isAnonymous = rs.getBoolean("isAnonymous");
                 int userID = rs.getInt("userID");
