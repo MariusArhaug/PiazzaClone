@@ -25,9 +25,7 @@ public class MainController {
     //Main start tp the program
     public void startProgram() {
         System.out.println("-------------------Welcome to Piazza-------------------");
-        if (this.user == null) {
-            this.user = this.loginUser();
-        }
+        this.user = loginUser();
         System.out.println("Success! Welcome " +  this.user.getName() + "!");
         this.chooseCourse();
         this.selectAction();
@@ -67,29 +65,30 @@ public class MainController {
 
         if (registeredCourses == null) {
             System.out.println("It appears that you're not registered for any course yet! ");
-        } else {
+            return;
+        }
 
-            System.out.println("All registered courses: ");
-            System.out.println(registeredCourses
+        System.out.println("All registered courses: ");
+        System.out.println(registeredCourses
+                .stream()
+                .map(e -> e.getName() + " ID: " + e.getCourseID())
+                .collect(Collectors.joining(" "))
+        );
+        while (true) {
+            //Make sure that user selects right courseID (only courses that he is registered for)
+            System.out.println("Select a courseID: [" + registeredCourses
                     .stream()
-                    .map(e -> e.getName() + " ID: " + e.getCourseID())
-                    .collect(Collectors.joining(" "))
-            );
-            while (true) {
-                //Make sure that user selects right courseID (only courses that he is registered for)
-                System.out.println("Select a courseID: [" + registeredCourses
-                        .stream()
-                        .map(e -> Integer.toString(e.getCourseID()))
-                        .collect(Collectors.joining(", ")) + "]");
-                int courseID = Integer.parseInt(in.nextLine());
-                if (registeredCourses.stream().anyMatch(e -> e.getCourseID() == courseID)) {
-                    this.course = createPost.selectCourse(courseID);
-                    break;
-                }
-                System.out.println("You are not registered for this course!");
+                    .map(e -> Integer.toString(e.getCourseID()))
+                    .collect(Collectors.joining(", ")) + "]");
+            int courseID = Integer.parseInt(in.nextLine());
+            if (registeredCourses.stream().anyMatch(e -> e.getCourseID() == courseID)) {
+                this.course = createPost.selectCourse(courseID);
+                break;
             }
+            System.out.println("You are not registered for this course!");
         }
     }
+
     public static boolean yes() {
         Scanner in = new Scanner(System.in);
         return in.nextLine().equalsIgnoreCase("y");
@@ -120,22 +119,7 @@ public class MainController {
             if (yes()) this.replyToPost();
 
             //=====View stats / Create folder / invite users=====//
-            if (this.user.isInstructor()) {
-                //======= View Stats =================//
-                System.out.println("Do you want to view user statistics? (y/n)");
-                if (yes()) this.stats.printStats(this.stats.getStats());
-                //======= Create Folder ==============//
-                System.out.println("Do you want to create folders for this course? (y/n)");
-                if (yes()) {
-                    Folder newFolder = this.createPost.createFolder(this.course.getCourseID());
-                    System.out.println("======================================");
-                    System.out.println("| New folder created! " + newFolder + " |");
-                    System.out.println("======================================");
-                }
-                //======= Invite users ==============//
-                System.out.println("Do you want to invite students to this course? (y/n)");
-                if (yes()) this.register.registerUserToCourse(this.course.getCourseID());
-            }
+            if (this.user.isInstructor()) this.instructorActions();
 
             //=====Search for posts=====//
             System.out.println("Do you want to search for a post? (y/n)");
@@ -147,22 +131,52 @@ public class MainController {
         }
     }
 
-    //Find posts that belong to a specific folder
+    /**
+     * Different actions only allowed for instructors:
+     * View statistics,
+     * Create folders,
+     * Invite students to courses.
+     */
+    public void instructorActions() {
+        //======= View Stats =================//
+        System.out.println("Do you want to view user statistics? (y/n)");
+        if (yes()) this.stats.printStats(this.stats.getStats());
+        //======= Create Folder ==============//
+        System.out.println("Do you want to create folders for this course? (y/n)");
+        if (yes()) {
+            Folder newFolder = this.createPost.createFolder(this.course.getCourseID());
+            System.out.println("======================================");
+            System.out.println("| New folder created! " + newFolder + " |");
+            System.out.println("======================================");
+        }
+        //======= Invite users ==============//
+        System.out.println("Do you want to invite students to this course? (y/n)");
+        if (yes()) this.register.registerUserToCourse(this.course.getCourseID());
+    }
+
+
+    /**
+     * Find posts that belong to a specific folder
+     */
     public void getPostInFolder() {
         int folderID = this.createPost.selectFolder(this.course.getCourseID());
         List<Post> posts = this.view.viewPosts(this.course.getCourseID(), folderID);
-        if (posts.isEmpty()) System.out.println("It appears that the folder has no posts yet!");
-        else {
-            System.out.println(posts
-                    .stream()
-                    .map(Object::toString)
-                    .collect(Collectors.joining("\n")));
-            this.user.increasePostsViewed();
+        if (posts.isEmpty()) {
+            System.out.println("It appears that the folder has no posts yet!");
+            return;
         }
+
+        System.out.println(posts
+                .stream()
+                .map(Object::toString)
+                .collect(Collectors.joining("\n")));
+        this.user.increasePostsViewed();
     }
 
-    //Start search input, user fills in what he wants to search for
-    //We try to find a post that either has a summary or content that includes the search input
+    /**
+     * Let user search for a specific post.
+     * Find post that either has matching summary or content.
+     */
     private void search() {
         Scanner in = new Scanner(System.in);
         while (true) {
@@ -233,57 +247,8 @@ public class MainController {
             System.out.println("You have to choose a valid post nr!");
         }
 
-        //Find the threads related to the post we want to reply to.
-        List<Thread> threads = view.viewThreads(postID);
-        Thread thread;
+        Thread thread = this.replyPost.selectThread(postID, this.user.isInstructor());
 
-        //If we have no threads, the reply becomes a Instructor/Student answer
-        //Here would also color the post if we used a GUI and not a TUI
-        if (threads.isEmpty()) {
-            String type = (this.user.isInstructor() ? "Instructor" : "Student") + " answer";
-            thread = replyPost.newThread(postID, type);
-            System.out.println("You created a new " + type + "!");
-        } else {
-            //We need to display thread as well as replies in that thread.
-            System.out.println("Threads: " + threads
-                    .stream()
-                    .filter(e -> !e.getType().contains("answer"))
-                    .map(e -> e.toString() + this.view.viewRepliesInThread(e.getThreadID())
-                            .stream()
-                            .map(a ->  a
-                                    .toString()
-                                    .replaceAll("(?m)^", "\t"))
-                            .collect(Collectors.joining("\n"))
-                    )
-                    .collect(Collectors.joining("\n")) + "\n" );
-
-            while (true) {
-                System.out.println("""
-                        Select a discussion nr you want to reply to.
-                        Press 0 to start a new discussion
-                        Press -1 If you don't want to reply""");
-                int threadID = Integer.parseInt(in.nextLine());
-
-                if (threads.stream().anyMatch(e -> e.getThreadID() == threadID )) {
-                    thread = threads
-                            .stream()
-                            .filter(e -> e.getThreadID() == threadID)
-                            .collect(Collectors.toList())
-                            .get(0);
-                    break;
-                }
-                if (threadID == 0) {
-                    System.out.println("You started a new discussion");
-                    thread = replyPost.newThread(postID, "Discussion");
-                    break;
-                }
-                if (threadID == -1) {
-                    System.out.println("No reply created!");
-                    return;
-                }
-                System.out.println("You must select a valid thread nr! ");
-            }
-        }
         System.out.println("Your reply: ");
         String content = in.nextLine();
 

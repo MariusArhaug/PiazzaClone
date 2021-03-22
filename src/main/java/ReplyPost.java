@@ -1,10 +1,14 @@
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
 
 //Let users reply to a specific post
 public class ReplyPost extends DBConnect {
 
+    private final View view = new View();
     private PreparedStatement regStatement;
     public ReplyPost() {
         super.connect();
@@ -55,5 +59,59 @@ public class ReplyPost extends DBConnect {
             e.printStackTrace();
         }
         return  null;
+    }
+
+    public Thread selectThread(int postID, boolean isInstructor) {
+        Scanner in = new Scanner(System.in);
+        List<Thread> threads = this.view.viewThreads(postID);
+
+        //If we have no threads, the reply becomes a Instructor/Student answer
+        //Here would also color the post if we used a GUI and not a TUI
+        if (threads.isEmpty()) {
+            String type = (isInstructor ? "Instructor" : "Student") + " answer";
+            System.out.println("You created a new " + type + "!");
+            return this.newThread(postID, type);
+        }
+
+        this.printThreads(threads);
+        System.out.println("""
+                    Select a discussion nr you want to reply to.
+                    Press 0 to start a new discussion
+                    Press -1 If you don't want to reply""");
+        while (true) {
+            int threadID = Integer.parseInt(in.nextLine());
+
+            if (threads.stream().anyMatch(e -> e.getThreadID() == threadID )) {
+                return threads
+                        .stream()
+                        .filter(e -> e.getThreadID() == threadID)
+                        .collect(Collectors.toList())
+                        .get(0);
+            }
+            if (threadID == 0) {
+                System.out.println("You started a new discussion");
+                return this.newThread(postID, "Discussion");
+
+            }
+            if (threadID == -1) {
+                System.out.println("No reply created!");
+                return null;
+            }
+            System.out.println("You must select a valid thread nr! ");
+        }
+    }
+
+    private void printThreads(List<Thread> threads) {
+        System.out.println("Threads: " + threads
+                .stream()
+                .filter(e -> !e.getType().contains("answer"))
+                .map(e -> e.toString() + this.view.viewRepliesInThread(e.getThreadID())
+                        .stream()
+                        .map(a ->  a
+                                .toString()
+                                .replaceAll("(?m)^", "\t"))
+                        .collect(Collectors.joining("\n"))
+                )
+                .collect(Collectors.joining("\n")) + "\n" );
     }
 }
