@@ -185,6 +185,7 @@ public class MainController {
                 break;
             }
             System.out.println("Found " + posts.size() + " posts!");
+            //Print out matching posts
             System.out.println(posts
                     .stream()
                     .map(Object::toString)
@@ -218,8 +219,13 @@ public class MainController {
         Scanner in = new Scanner(System.in);
         int postID;
         while (true) {
-            System.out.println("Select a post nr you want to reply to: ");
+            System.out.println("""
+            Select a post nr you want to reply to 
+            Or press -1 to cancel: 
+            """);
             postID = Integer.parseInt(in.nextLine());
+            if (postID == -1) return;
+
             int finalPostID = postID;
             if (posts.stream().anyMatch(e -> e.getPostID() == finalPostID)) break;
             System.out.println("You have to choose a valid post nr!");
@@ -251,7 +257,7 @@ public class MainController {
 
             while (true) {
                 System.out.println("""
-                        Select a discussion you want to reply to.
+                        Select a discussion nr you want to reply to.
                         Press 0 to start a new discussion
                         Press -1 If you don't want to reply""");
                 int threadID = Integer.parseInt(in.nextLine());
