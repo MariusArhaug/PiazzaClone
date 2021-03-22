@@ -31,7 +31,7 @@ public class Post {
             if ((reformatedContent + word).length() < 30) {
             reformatedContent +=  word + " ";
             } else {
-                reformatedContent +=  "\n";
+                reformatedContent += "\n| " + word;
             }
         }
         return reformatedContent;
@@ -47,7 +47,7 @@ public class Post {
                 "| Post nr: " + this.postID + "\n" +
                 "|===========================|" + "\n" +
                 "| Type: " + this.type + "\n" +
-                "| Summary: " + this.summary + "\n" +
+                "| Summary: " + reformatContent(this.summary) + "\n" +
                 "| Details: -----------------|" + "\n" +
                 "| " + reformatContent(this.content) + "\n| \n" +
                 "|---------------------------|" + "\n" +
