@@ -38,27 +38,27 @@ public class CreatePost extends DBConnect {
     }
 
     //Interface for user to create a post
-    public Post createPost(int courseID, int userID, boolean allowAnonymous) {
+    public Post createPost(Course course, User user) {
         Scanner in = new Scanner(System.in);
         System.out.println("-------Make new post------");
 
         System.out.println("Post type: (Question, Note, Poll) ");
         String type = in.nextLine().toLowerCase();
         System.out.println("Folders: ");
-        int folderID = this.selectFolder(courseID);
+        int folderID = this.selectFolder(course.getCourseID());
         System.out.println("Summary: ");
         String summary = in.nextLine();
         System.out.println("Details:  ");
 
         String content = in.nextLine();
         boolean isAnonymous = false;
-        if (allowAnonymous) {
+        if (course.allowAnonymous() && !user.isInstructor()) {
             System.out.println("Anonymous? (y/n):  ");
             isAnonymous = MainController.yes();
         }
 
         //Once all the info about the post is gathered, create new post
-        return this.insertPost(type, summary, content, isAnonymous, folderID, courseID, userID);
+        return this.insertPost(type, summary, content, isAnonymous, folderID, course.getCourseID(), user.getUserID());
     }
 
     //Insert new post into database and return the post as a Post object.
