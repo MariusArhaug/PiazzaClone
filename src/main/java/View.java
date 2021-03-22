@@ -191,6 +191,32 @@ public class View extends DBConnect {
         return null;
     }
 
+    public List<Reply> viewRepliesInThread(int threadID) {
+        try {
+            String SQLQuery = "SELECT * " +
+                    "FROM reply   " +
+                    "WHERE threadID = (?)";
+            this.regStatement = this.conn.prepareStatement(SQLQuery);
+            this.regStatement.setInt(1, threadID);
+            ResultSet rs = this.regStatement.executeQuery();
+            List<Reply> replies = new ArrayList<>();
+
+            while (rs.next()) {
+                int replyID = rs.getInt("replyID");
+                String contents = rs.getString("contents");
+                boolean isAnonymous = rs.getBoolean("isAnonymous");
+                boolean isInstructor = rs.getBoolean("isInstructor");
+                int userID = rs.getInt("userID");
+                replies.add(new Reply(replyID, threadID, contents, isAnonymous, isInstructor, userID));
+            }
+            return replies;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     //View all users that are not registered to a specific course with courseID
     public List<User> viewUsersNotInCourse(int courseID) {
         try {
@@ -199,7 +225,7 @@ public class View extends DBConnect {
                     "WHERE isInstructor = 0 AND userID NOT IN (" +
                     "   SELECT userID" +
                     "   FROM userCourse" +
-                    "   WHERE courseID <> (?)" +
+                    "   WHERE courseID = (?)" +
                     ")";
             this.regStatement = this.conn.prepareStatement(SQLQuery);
             this.regStatement.setInt(1, courseID);
