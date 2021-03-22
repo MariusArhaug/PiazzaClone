@@ -257,7 +257,11 @@ public class MainController {
                 int threadID = Integer.parseInt(in.nextLine());
 
                 if (threads.stream().anyMatch(e -> e.getThreadID() == threadID )) {
-                    thread = replyPost.selectThread(threadID);
+                    thread = threads
+                            .stream()
+                            .filter(e -> e.getThreadID() == threadID)
+                            .collect(Collectors.toList())
+                            .get(0);
                     break;
                 }
                 if (threadID == 0) {
