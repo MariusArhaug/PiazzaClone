@@ -25,16 +25,12 @@ public class Post {
     }
 
     public static String reformatContent(String content) {
-        String[] words = content.split(" ");
-        String reformatedContent = "";
-        for (String word : words) {
-            if ((reformatedContent + word).length() < 30) {
-            reformatedContent +=  word + " ";
-            } else {
-                reformatedContent += "\n| " + word;
-            }
+        StringBuilder sb = new StringBuilder(content);
+        int i = 0;
+        while (i + 30 < sb.length() && (i = sb.lastIndexOf(" ", i+20)) != -1) {
+            sb.replace(i, i+1, "\n| ");
         }
-        return reformatedContent;
+        return sb.toString();
     }
 
     public int getPostID() {
@@ -47,7 +43,8 @@ public class Post {
                 "| Post nr: " + this.postID + "\n" +
                 "|===========================|" + "\n" +
                 "| Type: " + this.type + "\n" +
-                "| Summary: " + reformatContent(this.summary) + "\n" +
+                "| Summary: -----------------|" + "\n" +
+                "| " + reformatContent(this.summary) + "\n| \n" +
                 "| Details: -----------------|" + "\n" +
                 "| " + reformatContent(this.content) + "\n| \n" +
                 "|---------------------------|" + "\n" +
