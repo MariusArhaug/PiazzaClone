@@ -37,30 +37,43 @@ public class MainController {
                     | Do you want to log out? (y/n)                          |
                     |--------------------------------------------------------|
                     """);
-            if (yes()) break;
+            if (!yes()) continue;
+            break;
         }
         this.logout();
     }
 
     //Interface to log in user.
     private void loginUser() {
-        User user = this.login.loginUser();
         //If we don't find user in db we get user = null
-        if (user == null) {
-            System.out.println("""
-                   |--------------------------------------------------------|
-                   | This account does not exist yet!                       |
-                   | Please register new account:                           |
-                   |--------------------------------------------------------|
-                    """);
-            while (true) {
+        User user;
+        while (true) {
+            user = this.login.loginUser();
+            if (user == null) {
+                System.out.println("""
+                        |--------------------------------------------------------|
+                        | This account does not exist!  |                        |
+                        | Retry?                        | Press: y               |
+                        | Register new account?         | Press: any key         |
+                        |--------------------------------------------------------|
+                         """);
+                if (yes()) continue;
+                break;
+            }
+            this.user = user;
+            return;
+        }
+
+        while (true) {
                 user = this.register.registerUser();
 
-                if (user != null) break;
+            if (user == null) {
                 System.out.println("An error has occurred! Please try again: ");
+                continue;
             }
+            this.user = user;
+            return;
         }
-        this.user = user;
     }
 
     //interface to select course
@@ -112,12 +125,12 @@ public class MainController {
     private void selectAction() {
         System.out.println("""
         |--------------------------------------------------------|
-        | View posts? Press: 0                                   |
-        | Create a post? Press: 1                                |
-        | Look for a post inside a folder? Press: 2              |
-        | Select/reply to a post? Press: 3                       | 
-        | Search for a post? Press: 4                            |   
-        | For none press enter.                                  |   
+        | View posts?                      | Press: 0            |
+        | Create a post?                   | Press: 1            |
+        | Look for a post inside a folder? | Press: 2            |
+        | Select/reply to a post?          | Press: 3            | 
+        | Search for a post?               | Press: 4            |   
+        | For none press enter.            |                     |   
         |--------------------------------------------------------|
         """);
         String action = new Scanner(System.in).nextLine();
@@ -134,10 +147,10 @@ public class MainController {
     public void instructorActions() {
         System.out.println("""
         |--------------------------------------------------------|
-        | View user statistics?: Press 0                         |
-        | Create folders for this course? : Press 1              |
-        | Invite students to this course? : Press 2              |
-        | For none press enter.                                  |   
+        | View user statistics?:          | Press 0              |
+        | Create folders for this course? | Press 1              |
+        | Invite students to this course? | Press 2              |
+        | For none press enter.           |                      |   
         |--------------------------------------------------------|
         """);
         String action = new Scanner(System.in).nextLine();
@@ -207,8 +220,8 @@ public class MainController {
         while (true) {
             System.out.println("""
             |--------------------------------------------------------|
-            | Select a post nr you want to reply to                  |
-            | Press -1 to cancel:                                    |
+            | Select a post nr you want to reply to:                 |
+            | Cancel?   | Press -1 to                                |
             |--------------------------------------------------------|
             """);
             postID = Integer.parseInt(new Scanner(System.in).nextLine());
