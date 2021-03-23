@@ -15,6 +15,29 @@ public class ReplyPost extends DBConnect {
     }
 
     /**
+     * Let user create new reply and increase post viewed and posts created.
+     * @param threadID ID of the thread the reply belongs to
+     * @param user ID of the user who created the reply.
+     */
+    public void newReply(int threadID, User user) {
+        //Only users can select that they want their reply be anonymous
+        Scanner in = new Scanner(System.in);
+        System.out.println("Your reply: ");
+        String content = in.nextLine();
+        Reply reply;
+        if (user.isInstructor()) {
+            reply = this.insertReply(threadID, user, content, false);
+        } else {
+            System.out.println("Anonymous? (y/n)");
+            reply = this.insertReply(threadID, user, content, MainController.yes());
+        }
+        user.increasePostsViewed();
+        user.increasePostsCreated();
+        System.out.println("Your reply: ");
+        System.out.println(reply);
+    }
+
+    /**
      * Reply to a thread and insert into the database
      * @param threadID ID of thread we want to reply to
      * @param user who has made reply
@@ -45,29 +68,6 @@ public class ReplyPost extends DBConnect {
             e.printStackTrace();
         }
         return null;
-    }
-
-    /**
-     * Let user create new reply and increase post viewed and posts created.
-     * @param threadID ID of the thread the reply belongs to
-     * @param user ID of the user who created the reply.
-     */
-    public void newReply(int threadID, User user) {
-        //Only users can select that they want their reply be anonymous
-        Scanner in = new Scanner(System.in);
-        System.out.println("Your reply: ");
-        String content = in.nextLine();
-        Reply reply;
-        if (user.isInstructor()) {
-            reply = this.insertReply(threadID, user, content, false);
-        } else {
-            System.out.println("Anonymous? (y/n)");
-            reply = this.insertReply(threadID, user, content, MainController.yes());
-        }
-        user.increasePostsViewed();
-        user.increasePostsCreated();
-        System.out.println("Your reply: ");
-        System.out.println(reply);
     }
 
     /**
@@ -149,7 +149,7 @@ public class ReplyPost extends DBConnect {
     private void printThreads(List<Thread> threads) {
         System.out.println("Threads: " + threads
                 .stream()
-                .filter(e -> !e.getType().contains("answer"))
+                .filter(e -> e.getType().equals("Discussion"))
                 .map(e -> e.toString() + this.view.viewRepliesInThread(e.getThreadID())
                         .stream()
                         .map(a ->  a

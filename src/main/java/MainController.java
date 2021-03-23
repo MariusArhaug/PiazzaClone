@@ -24,15 +24,19 @@ public class MainController {
 
     //Main start tp the program
     public void startProgram() {
-        System.out.println("-------------------Welcome to Piazza-------------------");
+        System.out.println("|-------------------Welcome to Piazza---------------------| \n");
         this.loginUser();
-        System.out.println("Success! Welcome " +  this.user.getName() + "!");
+        System.out.println("| Success! Welcome " +  this.user.getName() + "! \n");
         this.chooseCourse();
-        System.out.println("|---------------| Welcome to: " + this.course + " |---------------|");
+        System.out.println("|---------------| Welcome to: " + this.course + " |--------------| \n");
         while (true) {
             this.selectAction();
             if (this.user.isInstructor()) this.instructorActions();
-            System.out.println("Do you want to log out? (y/n)");
+            System.out.println("""
+                    |--------------------------------------------------------|
+                    | Do you want to log out? (y/n)                          |
+                    |--------------------------------------------------------|
+                    """);
             if (yes()) break;
         }
         this.logout();
@@ -98,7 +102,7 @@ public class MainController {
         }
     }
 
-    //Static method for checking if user inputed "y"
+    //Static method for checking if user inputted "y"
     public static boolean yes() {
         Scanner in = new Scanner(System.in);
         return in.nextLine().equalsIgnoreCase("y");
@@ -106,29 +110,28 @@ public class MainController {
 
     //Main hub for different actions a student or instructor may choose
     private void selectAction() {
-        Scanner in = new Scanner(System.in);
-        this.printPosts(this.course.getCourseID());
         System.out.println("""
         |--------------------------------------------------------|
-        | Create a post? Press: 0                                |
-        | Look for a post inside a folder? Press: 1              |
-        | Select/reply to a post? Press: 2                       | 
-        | Search for a post? Press: 3                            |   
+        | View posts? Press: 0                                   |
+        | Create a post? Press: 1                                |
+        | Look for a post inside a folder? Press: 2              |
+        | Select/reply to a post? Press: 3                       | 
+        | Search for a post? Press: 4                            |   
         | For none press enter.                                  |   
         |--------------------------------------------------------|
         """);
-        String action = in.nextLine();
+        String action = new Scanner(System.in).nextLine();
         switch(action) {
-            case "0" -> this.createPost.createPost(this.course, this.user); // Create post
-            case "1" -> this.getPostInFolder();                             // Look for post in folders
-            case "2" -> this.replyToPost();                                 // Reply to post
-            case "3" -> this.search();                                      // Search for posts
+            case "0" -> this.printPosts(this.course.getCourseID());         // View posts
+            case "1" -> this.createPost.createPost(this.course, this.user); // Create post
+            case "2" -> this.getPostInFolder();                             // Look for post in folders
+            case "3" -> this.replyToPost();                                 // Reply to post
+            case "4" -> this.search();                                      // Search for posts
         }
     }
 
     //Actions only allowed for instructors.
     public void instructorActions() {
-        Scanner in = new Scanner(System.in);
         System.out.println("""
         |--------------------------------------------------------|
         | View user statistics?: Press 0                         |
@@ -137,7 +140,7 @@ public class MainController {
         | For none press enter.                                  |   
         |--------------------------------------------------------|
         """);
-        String action = in.nextLine();
+        String action = new Scanner(System.in).nextLine();
         switch(action) {
             case "0" -> this.stats.printStats();                                        //Show statistics
             case "1" -> this.createPost.createFolder(this.course.getCourseID());        //Create a folder for course
@@ -163,10 +166,9 @@ public class MainController {
 
     //Search for a specific post where content/summary has to match with search input.
     private void search() {
-        Scanner in = new Scanner(System.in);
         while (true) {
             System.out.println("Search: ");
-            String searchInput = in.nextLine();
+            String searchInput = new Scanner(System.in).nextLine();
             System.out.println("You searched for: " + searchInput);
             List<Post> posts = this.view.viewPosts(this.course.getCourseID(), searchInput);
             if (posts.isEmpty()) {
@@ -176,11 +178,7 @@ public class MainController {
                 break;
             }
             System.out.println("Found " + posts.size() + " posts!");
-            //Print out matching posts
-            System.out.println(posts
-                    .stream()
-                    .map(Object::toString)
-                    .collect(Collectors.joining("\n")));
+            System.out.println(posts.stream().map(Object::toString).collect(Collectors.joining("\n")));
             this.user.increasePostsViewed();
             break;
         }
@@ -193,10 +191,7 @@ public class MainController {
         if (posts.isEmpty()) {
             System.out.println("It appears that the course: " + this.createPost.selectCourse(courseID) + " has no posts yet!");
         } else {
-            System.out.println(posts
-                    .stream()
-                    .map(Object::toString)
-                    .collect(Collectors.joining("\n")));
+            System.out.println(posts.stream().map(Object::toString).collect(Collectors.joining("\n")));
         }
     }
 
@@ -208,7 +203,6 @@ public class MainController {
         if (posts.isEmpty()) {
             return;
         }
-        Scanner in = new Scanner(System.in);
         int postID;
         while (true) {
             System.out.println("""
@@ -217,7 +211,7 @@ public class MainController {
             | Press -1 to cancel:                                    |
             |--------------------------------------------------------|
             """);
-            postID = Integer.parseInt(in.nextLine());
+            postID = Integer.parseInt(new Scanner(System.in).nextLine());
             if (postID == -1) return;
 
             int finalPostID = postID;
@@ -231,10 +225,7 @@ public class MainController {
 
     //Logout user, update user stats in database if he/she has seen/created posts
     private void logout() {
-        if (this.user.hasUpdated()) {
-            this.login.updateUser(this.user);
-            System.out.println("New stats saved!");
-        }
+        if (this.user.hasUpdated()) this.login.updateUser(this.user);
         System.out.println("Bye bye " + this.user.getName() + "!");
     }
 

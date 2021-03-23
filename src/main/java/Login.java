@@ -56,11 +56,11 @@ public class Login extends DBConnect {
      */
     public User loginUser() {
         Scanner in = new Scanner(System.in);
-        System.out.println("It appears that you're not logged in, please log in.");
-        System.out.println("-------------------------Login-------------------------");
-        System.out.println("Email: ");
+        System.out.println("| It appears that you're not logged in, please log in.    |");
+        System.out.println("|------------------------Login----------------------------|");
+        System.out.println("| Email: ");
         String email = in.nextLine();
-        System.out.println("Password: ");
+        System.out.println("| Password: ");
         String password = in.nextLine();
         return this.getUser(email, password);
     }
@@ -81,6 +81,7 @@ public class Login extends DBConnect {
             this.regStatement.setInt(3, user.getPostsLiked());
             this.regStatement.setInt(4, user.getUserID());
             this.regStatement.executeUpdate();
+            System.out.println(" New stats saved!");
         } catch(Exception e) {
             e.printStackTrace();
         }
