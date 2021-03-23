@@ -28,7 +28,12 @@ public class MainController {
         this.user = loginUser();
         System.out.println("Success! Welcome " +  this.user.getName() + "!");
         this.chooseCourse();
-        this.selectAction();
+        System.out.println("======== | Welcome to: " + this.course + " | ========");
+        while (true) {
+            this.selectAction();
+            System.out.println("Do you want to log out? (y/n)");
+            if (yes()) break;
+        }
         this.logout();
     }
 
@@ -96,39 +101,25 @@ public class MainController {
 
     //Main hub for different actions a student or instructor may choose
     private void selectAction() {
-        System.out.println("======== | Welcome to: " + this.course + " | ========");
-        //Keep user inside of "Piazza" until he/she wants to log out.
-        while (true) {
-            this.printPosts(this.course.getCourseID());
-
-            //=====Create post=====//
-            System.out.println("Do you want create a post? (y/n)");
-            if (yes()) {
-                Post newPost = createPost.createPost(this.course, this.user);
-                System.out.println("You created a new post: ");
-                System.out.println(newPost);
-                this.user.increasePostsCreated();
-            }
-
-            //=====Look for post in folders===//
-            System.out.println("Do you want to look for posts inside a folder? (y/n)");
-            if (yes()) this.getPostInFolder();
-
-            //=====Reply to post=====//
-            System.out.println("Do you want to select/reply to a post? (y/n)");
-            if (yes()) this.replyToPost();
-
-            //=====View stats / Create folder / invite users=====//
-            if (this.user.isInstructor()) this.instructorActions();
-
-            //=====Search for posts=====//
-            System.out.println("Do you want to search for a post? (y/n)");
-            if (yes()) this.search();
-
-            //=====Log out=====//
-            System.out.println("Do you want to log out? (y/n)");
-            if (yes()) break;
+        Scanner in = new Scanner(System.in);
+        this.printPosts(this.course.getCourseID());
+        System.out.println("""
+        |--------------------------------------------------------|
+        | Create a post? Press: 0                                |
+        | Look for a post inside a folder? Press: 1              |
+        | Select/reply to a post? Press: 2                       | 
+        | Search for a post? Press: 3                            |   
+        | For none press enter.                                  |   
+        |--------------------------------------------------------|
+        """);
+        String action = in.nextLine();
+        switch(action) {
+            case "0" -> this.createPost.createPost(this.course, this.user); //=====Create post=====//
+            case "1" -> this.getPostInFolder(); //=====Look for post in folders===//
+            case "2" -> this.replyToPost(); //=====Reply to post=====//
+            case "3" -> this.search();  //=====Search for posts=====//
         }
+        if (this.user.isInstructor()) this.instructorActions();
     }
 
     /**
@@ -138,20 +129,21 @@ public class MainController {
      * Invite students to courses.
      */
     public void instructorActions() {
-        //======= View Stats =================//
-        System.out.println("Do you want to view user statistics? (y/n)");
-        if (yes()) this.stats.printStats(this.stats.getStats());
-        //======= Create Folder ==============//
-        System.out.println("Do you want to create folders for this course? (y/n)");
-        if (yes()) {
-            Folder newFolder = this.createPost.createFolder(this.course.getCourseID());
-            System.out.println("======================================");
-            System.out.println("| New folder created! " + newFolder + " |");
-            System.out.println("======================================");
+        Scanner in = new Scanner(System.in);
+        System.out.println("""
+        |--------------------------------------------------------|
+        | View user statistics?: Press 0                         |
+        | Create folders for this course? : Press 1              |
+        | Invite students to this course? : Press 2              |
+        | For none press enter.                                  |   
+        |--------------------------------------------------------|
+        """);
+        String action = in.nextLine();
+        switch(action) {
+            case "0" -> this.stats.printStats(this.stats.getStats());
+            case "1" -> this.createPost.createFolder(this.course.getCourseID());
+            case "2" -> this.register.registerUserToCourse(this.course.getCourseID());
         }
-        //======= Invite users ==============//
-        System.out.println("Do you want to invite students to this course? (y/n)");
-        if (yes()) this.register.registerUserToCourse(this.course.getCourseID());
     }
 
 

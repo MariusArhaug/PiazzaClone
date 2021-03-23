@@ -66,7 +66,11 @@ public class CreatePost extends DBConnect {
         }
 
         //Once all the info about the post is gathered, create new post
-        return this.insertPost(type, summary, content, isAnonymous, folderID, course.getCourseID(), user.getUserID());
+        Post newPost = this.insertPost(type, summary, content, isAnonymous, folderID, course.getCourseID(), user.getUserID());
+        System.out.println("You created a new post: ");
+        System.out.println(newPost);
+        user.increasePostsCreated();
+        return newPost;
     }
 
     /**
@@ -130,15 +134,17 @@ public class CreatePost extends DBConnect {
     /**
      * Interface for users to create a folder with required fields
      * @param courseID ID of the course it belongs to
-     * @return Folder object.
      */
-    public Folder createFolder(int courseID) {
+    public void createFolder(int courseID) {
         Scanner in = new Scanner(System.in);
         System.out.println("Folder name: ");
         String folderName = in.nextLine();
         System.out.println("Parent folder (select 0 for none) :  ");
         int superFolderID = this.selectFolder(courseID);
-        return this.insertFolder(courseID, folderName, superFolderID);
+        Folder newFolder = this.insertFolder(courseID, folderName, superFolderID);
+        System.out.println("======================================");
+        System.out.println("| New folder created! " + newFolder + " |");
+        System.out.println("======================================");
     }
 
     /**
