@@ -51,19 +51,20 @@ public class GetStatistics extends DBConnect {
         List<Map<String, Integer[]>> stats = this.getStats();
         if (stats == null) {
             System.out.println("It appears that there are no current statistics available yet!");
-        } else {
-            String result = "==================================================" + "\n";
-            for (Map<String, Integer[]> innerMap : stats) {
-                result += "|Name: " + innerMap.keySet().iterator().next();
-                for (Integer[] values : innerMap.values()) {
-                    result += " | Posts created: " + values[0];
-                    result += " | Posts viewed: " + values[1] + " |";
-                }
-                result += "\n";
-                result += "====================================================";
-                result += "\n";
-            }
-            System.out.println(result);
+            return;
         }
+        String result = "|---------------------User Statistics--------------------|" + "\n";
+        for (Map<String, Integer[]> innerMap : stats) {
+            result += "| Name: " + innerMap.keySet().iterator().next();
+            for (Integer[] values : innerMap.values()) {
+                result += "\n| Posts created: " + values[0];
+                result += "\n| Posts viewed: " + values[1];
+                result += "\n|--------------------------------------------------------|";
+            }
+            result += "\n|\n";
+            result += "|--------------------------------------------------------|";
+            result += "\n";
+        }
+        System.out.println(result);
     }
 }

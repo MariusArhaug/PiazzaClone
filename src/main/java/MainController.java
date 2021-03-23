@@ -65,7 +65,7 @@ public class MainController {
         }
 
         while (true) {
-                user = this.register.registerUser();
+            user = this.register.registerUser();
 
             if (user == null) {
                 System.out.println("An error has occurred! Please try again: ");

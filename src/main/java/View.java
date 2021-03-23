@@ -124,7 +124,8 @@ public class View extends DBConnect {
     public List<Post> viewPosts(int courseID, int folderID) {
         try {
             //We're only interested in posts' attributes.
-            String SQLQuery = "SELECT posts.* " +
+            String SQLQuery = "" +
+                    "SELECT posts.* " +
                     "FROM posts INNER JOIN postFolder ON posts.postID = postFolder.postID   " +
                     "WHERE courseID = (?) AND folderID = (?)";
             this.regStatement = conn.prepareStatement(SQLQuery);
