@@ -25,12 +25,13 @@ public class MainController {
     //Main start tp the program
     public void startProgram() {
         System.out.println("-------------------Welcome to Piazza-------------------");
-        this.user = loginUser();
+        this.loginUser();
         System.out.println("Success! Welcome " +  this.user.getName() + "!");
         this.chooseCourse();
-        System.out.println("======== | Welcome to: " + this.course + " | ========");
+        System.out.println("|---------------| Welcome to: " + this.course + " |---------------|");
         while (true) {
             this.selectAction();
+            if (this.user.isInstructor()) this.instructorActions();
             System.out.println("Do you want to log out? (y/n)");
             if (yes()) break;
         }
@@ -38,13 +39,16 @@ public class MainController {
     }
 
     //Interface to log in user.
-    private User loginUser() {
+    private void loginUser() {
         User user = this.login.loginUser();
         //If we don't find user in db we get user = null
         if (user == null) {
-            System.out.println("This account does not exist yet!");
-            System.out.println("Please register new account:");
-            System.out.println("================================");
+            System.out.println("""
+                   |--------------------------------------------------------|
+                   | This account does not exist yet!                       |
+                   | Please register new account:                           |
+                   |--------------------------------------------------------|
+                    """);
             while (true) {
                 user = this.register.registerUser();
 
@@ -52,7 +56,7 @@ public class MainController {
                 System.out.println("An error has occurred! Please try again: ");
             }
         }
-        return user;
+        this.user = user;
     }
 
     //interface to select course
@@ -69,7 +73,7 @@ public class MainController {
         List<Course> registeredCourses = this.view.viewRegisteredCourses(this.user.getUserID());
 
         if (registeredCourses == null) {
-            System.out.println("It appears that you're not registered for any course yet! ");
+            System.out.println("It appears that you're not registered for any courses yet! ");
             return;
         }
 
@@ -94,6 +98,7 @@ public class MainController {
         }
     }
 
+    //Static method for checking if user inputed "y"
     public static boolean yes() {
         Scanner in = new Scanner(System.in);
         return in.nextLine().equalsIgnoreCase("y");
@@ -114,20 +119,14 @@ public class MainController {
         """);
         String action = in.nextLine();
         switch(action) {
-            case "0" -> this.createPost.createPost(this.course, this.user); //=====Create post=====//
-            case "1" -> this.getPostInFolder(); //=====Look for post in folders===//
-            case "2" -> this.replyToPost(); //=====Reply to post=====//
-            case "3" -> this.search();  //=====Search for posts=====//
+            case "0" -> this.createPost.createPost(this.course, this.user); // Create post
+            case "1" -> this.getPostInFolder();                             // Look for post in folders
+            case "2" -> this.replyToPost();                                 // Reply to post
+            case "3" -> this.search();                                      // Search for posts
         }
-        if (this.user.isInstructor()) this.instructorActions();
     }
 
-    /**
-     * Different actions only allowed for instructors:
-     * View statistics,
-     * Create folders,
-     * Invite students to courses.
-     */
+    //Actions only allowed for instructors.
     public void instructorActions() {
         Scanner in = new Scanner(System.in);
         System.out.println("""
@@ -140,16 +139,13 @@ public class MainController {
         """);
         String action = in.nextLine();
         switch(action) {
-            case "0" -> this.stats.printStats(this.stats.getStats());
-            case "1" -> this.createPost.createFolder(this.course.getCourseID());
-            case "2" -> this.register.registerUserToCourse(this.course.getCourseID());
+            case "0" -> this.stats.printStats();                                        //Show statistics
+            case "1" -> this.createPost.createFolder(this.course.getCourseID());        //Create a folder for course
+            case "2" -> this.register.registerUserToCourse(this.course.getCourseID());  //Register user to course
         }
     }
 
-
-    /**
-     * Find posts that belong to a specific folder
-     */
+    //Find posts that belong to a specific folder
     public void getPostInFolder() {
         int folderID = this.createPost.selectFolder(this.course.getCourseID());
         List<Post> posts = this.view.viewPosts(this.course.getCourseID(), folderID);
@@ -165,10 +161,7 @@ public class MainController {
         this.user.increasePostsViewed();
     }
 
-    /**
-     * Let user search for a specific post.
-     * Find post that either has matching summary or content.
-     */
+    //Search for a specific post where content/summary has to match with search input.
     private void search() {
         Scanner in = new Scanner(System.in);
         while (true) {
@@ -193,9 +186,7 @@ public class MainController {
         }
     }
 
-    /**
-     * Print posts to a corresponding course with courseID
-     */
+    //Print posts to a corresponding course with courseID
     private void printPosts(int courseID) {
         System.out.println("Current posts:" );
         List<Post> posts = this.view.viewPosts(courseID);
@@ -209,22 +200,8 @@ public class MainController {
         }
     }
 
-    /**
-     * Logs out user and terminates program.
-     * If user has had his stats updated we need to update our database.
-     */
-    private void logout() {
-        if (this.user.hasUpdated()) {
-            this.login.updateUser(this.user);
-            System.out.println("New stats saved!");
-        }
-        System.out.println("Bye bye " + this.user.getName() + "!");
-    }
 
-
-    /**
-     * Reply to a chosen post
-     */
+    //Reply to a given post
     public void replyToPost() {
         this.printPosts(this.course.getCourseID());
         List<Post> posts = this.view.viewPosts(this.course.getCourseID());
@@ -235,8 +212,10 @@ public class MainController {
         int postID;
         while (true) {
             System.out.println("""
-            Select a post nr you want to reply to 
-            Or press -1 to cancel: 
+            |--------------------------------------------------------|
+            | Select a post nr you want to reply to                  |
+            | Press -1 to cancel:                                    |
+            |--------------------------------------------------------|
             """);
             postID = Integer.parseInt(in.nextLine());
             if (postID == -1) return;
@@ -245,25 +224,18 @@ public class MainController {
             if (posts.stream().anyMatch(e -> e.getPostID() == finalPostID)) break;
             System.out.println("You have to choose a valid post nr!");
         }
-
         Thread thread = this.replyPost.selectThread(postID, this.user.isInstructor());
         if (thread == null) return;
+        this.replyPost.newReply(thread.getThreadID(), this.user);
+    }
 
-        System.out.println("Your reply: ");
-        String content = in.nextLine();
-
-        //Only users can select that they want their reply be anonymous
-        Reply reply;
-        if (this.user.isInstructor()) {
-            reply = replyPost.newReply(thread.getThreadID(), this.user, content, false);
-        } else {
-            System.out.println("Anonymous? (y/n)");
-            reply = replyPost.newReply(thread.getThreadID(), this.user, content, yes());
+    //Logout user, update user stats in database if he/she has seen/created posts
+    private void logout() {
+        if (this.user.hasUpdated()) {
+            this.login.updateUser(this.user);
+            System.out.println("New stats saved!");
         }
-        this.user.increasePostsViewed();
-        this.user.increasePostsCreated();
-        System.out.println("Your reply: ");
-        System.out.println(reply);
+        System.out.println("Bye bye " + this.user.getName() + "!");
     }
 
     public static void main(String[] args) {

@@ -22,7 +22,7 @@ public class ReplyPost extends DBConnect {
      * @param isAnonymous whether the reply is anonymous or not
      * @return Reply object.
      */
-    public Reply newReply(int threadID, User user, String contents, boolean isAnonymous) {
+    private Reply insertReply(int threadID, User user, String contents, boolean isAnonymous) {
         try {
             String SQLQuery =
                     "INSERT INTO reply (threadID, contents, isAnonymous, isInstructor, userID)" +
@@ -45,6 +45,29 @@ public class ReplyPost extends DBConnect {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Let user create new reply and increase post viewed and posts created.
+     * @param threadID ID of the thread the reply belongs to
+     * @param user ID of the user who created the reply.
+     */
+    public void newReply(int threadID, User user) {
+        //Only users can select that they want their reply be anonymous
+        Scanner in = new Scanner(System.in);
+        System.out.println("Your reply: ");
+        String content = in.nextLine();
+        Reply reply;
+        if (user.isInstructor()) {
+            reply = this.insertReply(threadID, user, content, false);
+        } else {
+            System.out.println("Anonymous? (y/n)");
+            reply = this.insertReply(threadID, user, content, MainController.yes());
+        }
+        user.increasePostsViewed();
+        user.increasePostsCreated();
+        System.out.println("Your reply: ");
+        System.out.println(reply);
     }
 
     /**
