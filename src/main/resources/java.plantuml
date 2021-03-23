@@ -1,0 +1,241 @@
+@startuml
+
+title __JAVA's Class Diagram__\n
+
+  namespace main  {
+    class Course {
+        - allowAnonymous : boolean
+        - courseID : int
+        - name : String
+        - term : char
+        + Course()
+        + allowAnonymous()
+        + getCourseID()
+        + getName()
+        + toString()
+    }
+  }
+
+
+  namespace main {
+    class CreatePost {
+        - regStatement : PreparedStatement
+        + CreatePost()
+        + createFolder()
+        + createPost()
+        + selectCourse()
+        + selectFolder()
+        - addPostToFolder()
+        - insertFolder()
+        - insertPost()
+    }
+  }
+
+
+  namespace main{
+    class DBConnect {
+        # conn : Connection
+        + connect()
+    }
+  }
+
+  namespace main {
+    class Folder {
+        - courseID : int
+        - folderID : int
+        - name : String
+        - superFolderID : int
+        + Folder()
+        + getFolderID()
+        + toString()
+    }
+  }
+
+
+  namespace main {
+    class GetStatistics {
+        - regStatement : PreparedStatement
+        + GetStatistics()
+        + printStats()
+        - getStats()
+    }
+  }
+
+
+  namespace main {
+    class Login {
+        - regStatement : PreparedStatement
+        + Login()
+        + getUser()
+        + loginUser()
+        + updateUser()
+    }
+  }
+
+
+  namespace main {
+    class MainController {
+        + MainController()
+        + getPostInFolder()
+        + instructorActions()
+        {static} + main()
+        + replyToPost()
+        + startProgram()
+        {static} + yes()
+        - chooseCourse()
+        - loginUser()
+        - logout()
+        - printPosts()
+        - search()
+        - selectAction()
+    }
+  }
+
+
+  namespace main {
+    class Post {
+        - content : String
+        - courseID : int
+        - isAnonymous : boolean
+        - likes : int
+        - postID : int
+        - summary : String
+        - type : String
+        - userID : int
+        + Post()
+        + getPostID()
+        {static} + reformatContent()
+        + toString()
+    }
+  }
+
+
+  namespace main {
+    class Register {
+        - regStatement : PreparedStatement
+        + Register()
+        {static} + hashPassword()
+        + registerUser()
+        + registerUserToCourse()
+        - insertUser()
+        - insertUserToCourse()
+    }
+  }
+
+
+  namespace main {
+    class Reply {
+        - contents : String
+        - isAnonymous : boolean
+        - isInstructor : boolean
+        - replyID : int
+        - threadID : int
+        - userID : int
+        + Reply()
+        + toString()
+    }
+  }
+
+
+  namespace main {
+    class ReplyPost {
+        - regStatement : PreparedStatement
+        + ReplyPost()
+        + newReply()
+        + newThread()
+        + selectThread()
+        - insertReply()
+        - printThreads()
+    }
+  }
+
+
+  namespace main {
+    class Thread {
+        - isResolved : boolean
+        - postID : int
+        - threadID : int
+        - timesCommented : int
+        - timesViewed : int
+        - type : String
+        + Thread()
+        + getThreadID()
+        + getType()
+        + toString()
+    }
+  }
+
+
+  namespace main {
+    class User {
+        - email : String
+        - hasUpdated : boolean
+        - isInstructor : boolean
+        - name : String
+        - password : String
+        - postsCreated : int
+        - postsLiked : int
+        - postsViewed : int
+        - userID : int
+        + User()
+        + User()
+        + getName()
+        + getPostsCreated()
+        + getPostsLiked()
+        + getPostsViewed()
+        + getUserID()
+        + hasUpdated()
+        + increasePostsCreated()
+        + increasePostsViewed()
+        + isInstructor()
+        + toString()
+    }
+  }
+
+
+  namespace main {
+    class View {
+        - regStatement : PreparedStatement
+        + View()
+        + viewCourseFolders()
+        + viewCourses()
+        + viewPosts()
+        + viewPosts()
+        + viewPosts()
+        + viewRegisteredCourses()
+        + viewRepliesInThread()
+        + viewThreads()
+        + viewUsersNotInCourse()
+        - findCourses()
+        - findPosts()
+    }
+  }
+
+  main.CreatePost -up-|> main.DBConnect
+  main.CreatePost o-- main.View : view
+  main.GetStatistics -up-|> main.DBConnect
+  main.Login -up-|> main.DBConnect
+  main.MainController o-- main.Course : course
+  main.MainController o-- main.CreatePost : createPost
+  main.MainController o-- main.Login : login
+  main.MainController o-- main.Register : register
+  main.MainController o-- main.ReplyPost : replyPost
+  main.MainController o-- main.GetStatistics : stats
+  main.MainController o-- main.User : user
+  main.MainController o-- main.View : view
+  main.Register -up-|> main.DBConnect
+  main.Register o-- main.Login : login
+  main.Register o-- main.View : view
+  main.ReplyPost -up-|> main.DBConnect
+  main.ReplyPost o-- main.View : view
+  main.View -up-|> main.DBConnect
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml
