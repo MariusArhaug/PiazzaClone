@@ -62,7 +62,7 @@ public class Login extends DBConnect {
         while (true) {
             Scanner in = new Scanner(System.in);
             System.out.println("| It appears that you're not logged in, please log in.    |");
-            System.out.println("|------------------------backend.Login----------------------------|");
+            System.out.println("|------------------------Login----------------------------|");
             System.out.println("| Email: ");
             String email = in.nextLine();
             System.out.println("| Password: ");

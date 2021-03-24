@@ -23,7 +23,7 @@ public class Reply {
 
     public String toString() {
         return  "|===========================|" + "\n" +
-                "| types.Reply nr: " + this.replyID + "\n" +
+                "| Reply nr: " + this.replyID + "\n" +
                 "|===========================|" + "\n" +
                 "| Details : ----------------|" + "\n" +
                 "| " + Post.reformatContent(this.contents) + "\n" +

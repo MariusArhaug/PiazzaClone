@@ -144,14 +144,16 @@ public class CreatePost extends DBConnect {
      */
     public void createFolder(int courseID) {
         Scanner in = new Scanner(System.in);
-        System.out.println("types.Folder name: ");
+        System.out.println("Folder name: ");
         String folderName = in.nextLine();
         System.out.println("Parent folder (select 0 for none) :  ");
         int superFolderID = this.selectFolder(courseID);
         Folder newFolder = this.insertFolder(courseID, folderName, superFolderID);
-        System.out.println("======================================");
-        System.out.println("| New folder created! " + newFolder + " |");
-        System.out.println("======================================");
+        System.out.println("""
+        |====================================|
+        | New folder created! """ + newFolder + """ 
+        |====================================|
+        """);
     }
 
     /**

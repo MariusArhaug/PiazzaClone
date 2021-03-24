@@ -72,7 +72,7 @@ public class Register extends DBConnect {
                 continue;
             }
             User user = this.insertUser(name, email, password, isInstructor);
-            if (user == null) {System.out.println("An error has occured! Please try again!"); continue;}
+            if (user == null) {System.out.println("An error has occurred! Please try again!"); continue;}
             return user;
         }
     }
@@ -146,7 +146,7 @@ public class Register extends DBConnect {
             System.out.println("You must choose a valid user ID!");
         }
         int finalUserID1 = userID;
-        System.out.println("types.User" + users.stream()
+        System.out.println("User" + users.stream()
                 .filter(e -> e.getUserID() == finalUserID1)
                 .map(Object::toString)
                 .collect(Collectors.joining("")) + " has been invited!");

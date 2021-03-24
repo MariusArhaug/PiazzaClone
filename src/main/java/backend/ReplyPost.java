@@ -1,7 +1,5 @@
 package backend;
 
-import backend.CreatePost;
-import backend.DBConnect;
 import frontend.MainController;
 import types.Post;
 import types.Reply;
@@ -192,18 +190,21 @@ public class ReplyPost extends DBConnect {
 
         this.printThreads(threads);
         System.out.println("""
-                    Select a discussion nr you want to reply to.
-                    Press 0 to start a new discussion
-                    Press -1 If you don't want to reply""");
+        |--------------------------------------------------------|
+        | Select a discussion nr you want to reply to.           |
+        | Start a new discussion        | Press: 0               |  
+        | If you don't want to reply    | Press -1               |
+        |--------------------------------------------------------|
+        """);
         while (true) {
             int threadID = Integer.parseInt(in.nextLine());
 
             if (threads.stream().anyMatch(e -> e.getThreadID() == threadID )) {
                 return threads
-                        .stream()
-                        .filter(e -> e.getThreadID() == threadID)
-                        .collect(Collectors.toList())
-                        .get(0);
+                    .stream()
+                    .filter(e -> e.getThreadID() == threadID)
+                    .collect(Collectors.toList())
+                    .get(0);
             }
             if (threadID == 0) {
                 System.out.println("You started a new discussion");
@@ -224,15 +225,15 @@ public class ReplyPost extends DBConnect {
      */
     private void printThreads(List<Thread> threads) {
         System.out.println("Threads: " + threads
+        .stream()
+        .filter(e -> e.getType().equals("Discussion"))
+        .map(e -> e.toString() + this.view.viewRepliesInThread(e.getThreadID())
                 .stream()
-                .filter(e -> e.getType().equals("Discussion"))
-                .map(e -> e.toString() + this.view.viewRepliesInThread(e.getThreadID())
-                        .stream()
-                        .map(a ->  a
-                                .toString()
-                                .replaceAll("(?m)^", "\t"))
-                        .collect(Collectors.joining("\n"))
-                )
-                .collect(Collectors.joining("\n")) + "\n" );
+                .map(a ->  a
+                        .toString()
+                        .replaceAll("(?m)^", "\t"))
+                .collect(Collectors.joining("\n"))
+        )
+        .collect(Collectors.joining("\n")) + "\n" );
     }
 }

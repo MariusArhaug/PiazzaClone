@@ -46,7 +46,7 @@ public class Post {
 
     public String toString() {
         return  "|===========================|" + "\n" +
-                "| types.Post nr: " + this.postID + "\n" +
+                "| Post nr: " + this.postID + "\n" +
                 "|===========================|" + "\n" +
                 "| Type: " + this.type + "\n" +
                 "| Summary: -----------------|" + "\n" +
@@ -55,7 +55,7 @@ public class Post {
                 "| " + reformatContent(this.content) + "\n| \n" +
                 "|---------------------------|" + "\n" +
                 "| Likes: " + this.likes + "\n" +
-                "| By: " + (this.isAnonymous ? "Anon" : "types.User ID: " + this.userID) + "\n" +
+                "| By: " + (this.isAnonymous ? "Anon" : "User ID: " + this.userID) + "\n" +
                 "| ==========================|" + "\n";
     }
 }

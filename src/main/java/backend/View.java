@@ -180,7 +180,7 @@ public class View extends DBConnect {
      */
     public List<Folder> viewCourseFolders(int courseID) {
         if (courseID == 0) {
-            throw new IllegalArgumentException("types.Course Not found");
+            throw new IllegalArgumentException("Course Not found");
         }
         try {
             String SQLQuery = "SELECT * " +
