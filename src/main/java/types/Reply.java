@@ -1,5 +1,8 @@
+package types;
 
-//Reply class that lets us store different data about a reply.
+import types.Post;
+
+//types.Reply class that lets us store different data about a reply.
 public class Reply {
 
     private final int replyID;
@@ -20,7 +23,7 @@ public class Reply {
 
     public String toString() {
         return  "|===========================|" + "\n" +
-                "| Reply nr: " + this.replyID + "\n" +
+                "| types.Reply nr: " + this.replyID + "\n" +
                 "|===========================|" + "\n" +
                 "| Details : ----------------|" + "\n" +
                 "| " + Post.reformatContent(this.contents) + "\n" +

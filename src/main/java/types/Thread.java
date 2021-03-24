@@ -1,6 +1,8 @@
+package types;
+
 import java.util.List;
 
-//Thread class that lets us store different data about a thread.
+//types.Thread class that lets us store different data about a thread.
 public class Thread {
     private final int threadID;
     private final boolean isResolved;
@@ -30,7 +32,7 @@ public class Thread {
 
     public String toString() {
         return  "|----------------------|" + "\n" +
-                "|Thread nr: " + this.threadID + "\n" +
+                "|types.Thread nr: " + this.threadID + "\n" +
                 "|----------------------|" + "\n" +
                 "|-----Resolved--(" + (this.isResolved ? "yes)" : "no)-") + "--| \n";
     }

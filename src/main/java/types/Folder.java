@@ -1,5 +1,6 @@
+package types;
 
-//Folder class that lets us store different data about a folder.
+//types.Folder class that lets us store different data about a folder.
 public class Folder {
 
     private final int folderID;

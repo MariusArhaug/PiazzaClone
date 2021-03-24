@@ -1,4 +1,4 @@
-
+package types;
 
 public class User {
 
@@ -12,7 +12,7 @@ public class User {
     private int postsLiked = 0;
     private boolean hasUpdated = false;
 
-    //User object instanced from Java
+    //types.User object instanced from Java
     public User(int userID, String name, String email, String password, boolean isInstructor) {
         this.userID = userID;
         this.name = name;
@@ -20,7 +20,7 @@ public class User {
         this.password = password;
         this.isInstructor = isInstructor;
     }
-    //User object instanced from SQL query
+    //types.User object instanced from SQL query
     public User(int userID,String[] strings, boolean isInstructor, int[] postCounts) {
         this.userID = userID;
         this.name = strings[0];

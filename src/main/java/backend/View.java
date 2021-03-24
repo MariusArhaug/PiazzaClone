@@ -1,3 +1,9 @@
+package backend;
+
+import backend.DBConnect;
+import types.*;
+import types.Thread;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -13,7 +19,7 @@ public class View extends DBConnect {
     }
 
     /**
-     * View all courses
+     * backend.View all courses
      * @return List of courses
      */
     public List<Course> viewCourses() {
@@ -30,7 +36,7 @@ public class View extends DBConnect {
     }
 
     /**
-     * View all courses that user is registered to
+     * backend.View all courses that user is registered to
      * @param userID ID of user
      * @return List of courses
      */
@@ -72,7 +78,7 @@ public class View extends DBConnect {
     }
 
     /**
-     * View posts inside of a course
+     * backend.View posts inside of a course
      * @param courseID ID of course
      * @return List of posts.
      */
@@ -149,7 +155,7 @@ public class View extends DBConnect {
             ResultSet rs = this.regStatement.executeQuery();
             List<Post> posts = new ArrayList<>();
 
-            //We create Post objects that we return in the list
+            //We create types.Post objects that we return in the list
             while (rs.next()) {
                 int postID = rs.getInt("postID");
                 String type = rs.getString("type");
@@ -174,7 +180,7 @@ public class View extends DBConnect {
      */
     public List<Folder> viewCourseFolders(int courseID) {
         if (courseID == 0) {
-            throw new IllegalArgumentException("Course Not found");
+            throw new IllegalArgumentException("types.Course Not found");
         }
         try {
             String SQLQuery = "SELECT * " +
@@ -266,7 +272,7 @@ public class View extends DBConnect {
     /**
      * List of all users that are not registered to a specific course with courseID
      * @param courseID ID of course
-     * @return List of User
+     * @return List of types.User
      */
     public List<User> viewUsersNotInCourse(int courseID) {
         try {

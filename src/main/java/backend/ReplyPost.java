@@ -1,3 +1,13 @@
+package backend;
+
+import backend.CreatePost;
+import backend.DBConnect;
+import frontend.MainController;
+import types.Post;
+import types.Reply;
+import types.Thread;
+import types.User;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -9,11 +19,57 @@ import java.util.stream.Collectors;
 public class ReplyPost extends DBConnect {
 
     private final View view = new View();
+    private final CreatePost createPost = new CreatePost();
     private PreparedStatement regStatement;
     public ReplyPost() {
         super.connect();
     }
 
+    /**
+     * types.Reply to post in a course
+     * @param courseID ID of course
+     * @param user user who is replying.
+     */
+    public void replyToPost(int courseID, User user) {
+        this.printPosts(courseID);
+        List<Post> posts = this.view.viewPosts(courseID);
+        if (posts.isEmpty()) {
+            return;
+        }
+        int postID;
+        while (true) {
+            System.out.println("""
+            |--------------------------------------------------------|
+            | Select a post nr you want to reply to:                 |
+            | Cancel?   | Press -1 to                                |
+            |--------------------------------------------------------|
+            """);
+            postID = Integer.parseInt(new Scanner(System.in).nextLine());
+            if (postID == -1) return;
+
+            int finalPostID = postID;
+            if (posts.stream().anyMatch(e -> e.getPostID() == finalPostID)) break;
+            System.out.println("You have to choose a valid post nr!");
+        }
+        Thread thread = this.selectThread(postID, user.isInstructor());
+        if (thread == null) return;
+        this.newReply(thread.getThreadID(), user);
+    }
+
+
+    /**
+     * Print posts to a corresponding course with courseID
+     * @param courseID ID of course
+     */
+    public void printPosts(int courseID) {
+        System.out.println("Current posts:" );
+        List<Post> posts = this.view.viewPosts(courseID);
+        if (posts.isEmpty()) {
+            System.out.println("It appears that the course: " + this.createPost.selectCourse(courseID) + " has no posts yet!");
+        } else {
+            System.out.println(posts.stream().map(Object::toString).collect(Collectors.joining("\n")));
+        }
+    }
     /**
      * Let user create new reply and increase post viewed and posts created.
      * @param threadID ID of the thread the reply belongs to
@@ -38,12 +94,32 @@ public class ReplyPost extends DBConnect {
     }
 
     /**
-     * Reply to a thread and insert into the database
+     * Find posts that belong to a specific folder
+     * @param courseID ID of course
+     * @param user user
+     */
+    public void getPostInFolder(int courseID, User user) {
+        int folderID = this.createPost.selectFolder(courseID);
+        List<Post> posts = this.view.viewPosts(courseID, folderID);
+        if (posts.isEmpty()) {
+            System.out.println("It appears that the folder has no posts yet!");
+            return;
+        }
+
+        System.out.println(posts
+                .stream()
+                .map(Object::toString)
+                .collect(Collectors.joining("\n")));
+        user.increasePostsViewed();
+    }
+
+    /**
+     * types.Reply to a thread and insert into the database
      * @param threadID ID of thread we want to reply to
      * @param user who has made reply
      * @param contents details of the reply
      * @param isAnonymous whether the reply is anonymous or not
-     * @return Reply object.
+     * @return types.Reply object.
      */
     private Reply insertReply(int threadID, User user, String contents, boolean isAnonymous) {
         try {
@@ -74,7 +150,7 @@ public class ReplyPost extends DBConnect {
      * Create and insert new thread into database
      * @param postID ID of the post the thread belongs to
      * @param type The type of thread that's been made; Instructor/Student/Discussion
-     * @return Thread object.
+     * @return types.Thread object.
      */
     public Thread newThread(int postID, String type) {
         try {
@@ -144,7 +220,7 @@ public class ReplyPost extends DBConnect {
 
     /**
      * Print out threads and their corresponding trail of replies.
-     * @param threads list of Thread objects.
+     * @param threads list of types.Thread objects.
      */
     private void printThreads(List<Thread> threads) {
         System.out.println("Threads: " + threads

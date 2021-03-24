@@ -1,3 +1,7 @@
+package backend;
+
+import backend.DBConnect;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -48,12 +52,12 @@ public class GetStatistics extends DBConnect {
 
     //Format stats into a viewable interface.
     public void printStats() {
-        List<Map<String, Integer[]>> stats = this.getStats();
+        List<Map<String, Integer[]>> stats = getStats();
         if (stats == null) {
             System.out.println("It appears that there are no current statistics available yet!");
             return;
         }
-        String result = "|---------------------User Statistics--------------------|" + "\n";
+        String result = "|---------------------types.User Statistics--------------------|" + "\n";
         for (Map<String, Integer[]> innerMap : stats) {
             result += "| Name: " + innerMap.keySet().iterator().next();
             for (Integer[] values : innerMap.values()) {

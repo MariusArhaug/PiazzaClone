@@ -1,3 +1,7 @@
+package backend;
+
+import types.User;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
@@ -50,7 +54,7 @@ public class Register extends DBConnect {
 
     /**
      * Interface for user form
-     * @return User object.
+     * @return types.User object.
      */
     public User registerUser() {
         while (true) {
@@ -67,7 +71,9 @@ public class Register extends DBConnect {
                 System.out.println("You must fill out every field! Name, email and password!");
                 continue;
             }
-            return this.insertUser(name, email, password, isInstructor);
+            User user = this.insertUser(name, email, password, isInstructor);
+            if (user == null) {System.out.println("An error has occured! Please try again!"); continue;}
+            return user;
         }
     }
 
@@ -77,7 +83,7 @@ public class Register extends DBConnect {
      * @param email user email
      * @param password password
      * @param isInstructor student/instructor
-     * @return User object.
+     * @return types.User object.
      */
     private User insertUser(String name, String email, String password, boolean isInstructor) {
         User existingUser = this.login.getUser(email, password);
@@ -140,7 +146,7 @@ public class Register extends DBConnect {
             System.out.println("You must choose a valid user ID!");
         }
         int finalUserID1 = userID;
-        System.out.println("User" + users.stream()
+        System.out.println("types.User" + users.stream()
                 .filter(e -> e.getUserID() == finalUserID1)
                 .map(Object::toString)
                 .collect(Collectors.joining("")) + " has been invited!");

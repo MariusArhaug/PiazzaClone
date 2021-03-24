@@ -1,5 +1,6 @@
+package types;
 
-//Post class that lets us store different data about a post.
+//types.Post class that lets us store different data about a post.
 public class Post {
 
     private final int postID;
@@ -45,7 +46,7 @@ public class Post {
 
     public String toString() {
         return  "|===========================|" + "\n" +
-                "| Post nr: " + this.postID + "\n" +
+                "| types.Post nr: " + this.postID + "\n" +
                 "|===========================|" + "\n" +
                 "| Type: " + this.type + "\n" +
                 "| Summary: -----------------|" + "\n" +
@@ -54,7 +55,7 @@ public class Post {
                 "| " + reformatContent(this.content) + "\n| \n" +
                 "|---------------------------|" + "\n" +
                 "| Likes: " + this.likes + "\n" +
-                "| By: " + (this.isAnonymous ? "Anon" : "User ID: " + this.userID) + "\n" +
+                "| By: " + (this.isAnonymous ? "Anon" : "types.User ID: " + this.userID) + "\n" +
                 "| ==========================|" + "\n";
     }
 }

@@ -1,3 +1,11 @@
+package backend;
+
+import frontend.MainController;
+import types.Course;
+import types.Folder;
+import types.Post;
+import types.User;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -16,9 +24,9 @@ public class CreatePost extends DBConnect {
     }
 
     /**
-     * Select course based on user input and return as a new Course object
+     * Select course based on user input and return as a new types.Course object
      * @param courseID the ID of the course we want
-     * @return Course object
+     * @return types.Course object
      */
     public Course selectCourse(int courseID) {
         try {
@@ -41,16 +49,16 @@ public class CreatePost extends DBConnect {
     }
 
     /**
-     * User TUI for filling in form
+     * types.User TUI for filling in form
      * @param course which course the post belongs to
      * @param user who created the post
-     * @return Post object
+     *
      */
-    public Post createPost(Course course, User user) {
+    public void createPost(Course course, User user) {
         Scanner in = new Scanner(System.in);
         System.out.println("-------Make new post------");
 
-        System.out.println("Post type: (Question, Note, Poll) ");
+        System.out.println("types.Post type: (Question, Note, Poll) ");
         String type = in.nextLine().toLowerCase();
         System.out.println("Folders: ");
         int folderID = this.selectFolder(course.getCourseID());
@@ -70,11 +78,10 @@ public class CreatePost extends DBConnect {
         System.out.println("You created a new post: ");
         System.out.println(newPost);
         user.increasePostsCreated();
-        return newPost;
     }
 
     /**
-     * Insert new post into database and return the post as a Post object.
+     * Insert new post into database and return the post as a types.Post object.
      * @param type type of post (Question, Note, Poll)
      * @param summary Short summary
      * @param content details
@@ -82,7 +89,7 @@ public class CreatePost extends DBConnect {
      * @param folderID ID the folder it belongs to
      * @param courseID ID of the course it belongs to
      * @param userID ID of creator.
-     * @return Post object.
+     * @return types.Post object.
      */
     private Post insertPost(String type, String summary, String content, boolean isAnonymous, int folderID, int courseID, int userID) {
         try {
@@ -137,7 +144,7 @@ public class CreatePost extends DBConnect {
      */
     public void createFolder(int courseID) {
         Scanner in = new Scanner(System.in);
-        System.out.println("Folder name: ");
+        System.out.println("types.Folder name: ");
         String folderName = in.nextLine();
         System.out.println("Parent folder (select 0 for none) :  ");
         int superFolderID = this.selectFolder(courseID);
@@ -149,7 +156,7 @@ public class CreatePost extends DBConnect {
 
     /**
      * Select a folder to corresponding course with courseID
-     * @param courseID ID of the course it belonggs to
+     * @param courseID ID of the course it belongs to
      * @return ID of folder.
      */
     public int selectFolder(int courseID) {
@@ -177,7 +184,7 @@ public class CreatePost extends DBConnect {
      * @param courseID ID of course it belongs to
      * @param folderName Name of the folder
      * @param superFolderID Parent folder if it is a subfolder.
-     * @return Folder object.
+     * @return types.Folder object.
      */
     private Folder insertFolder(int courseID, String folderName, int superFolderID) {
         try {

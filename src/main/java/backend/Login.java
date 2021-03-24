@@ -1,3 +1,8 @@
+package backend;
+
+import frontend.MainController;
+import types.User;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Scanner;
@@ -15,7 +20,7 @@ public class Login extends DBConnect {
      * /Get user from database with corresponding email and password
      * @param email user email.
      * @param password user password
-     * @return User object
+     * @return types.User object
      */
     public User getUser(String email, String password) {
         try {
@@ -49,25 +54,54 @@ public class Login extends DBConnect {
         return null;
     }
 
-
     /**
      * Interface to fill in user info.
-     * @return User object.
+     * @return types.User object.
      */
     public User loginUser() {
-        Scanner in = new Scanner(System.in);
-        System.out.println("| It appears that you're not logged in, please log in.    |");
-        System.out.println("|------------------------Login----------------------------|");
-        System.out.println("| Email: ");
-        String email = in.nextLine();
-        System.out.println("| Password: ");
-        String password = in.nextLine();
-        return this.getUser(email, password);
+        while (true) {
+            Scanner in = new Scanner(System.in);
+            System.out.println("| It appears that you're not logged in, please log in.    |");
+            System.out.println("|------------------------backend.Login----------------------------|");
+            System.out.println("| Email: ");
+            String email = in.nextLine();
+            System.out.println("| Password: ");
+            String password = in.nextLine();
+            User user = this.getUser(email, password);
+            if (user == null) {
+                System.out.println("""
+                |--------------------------------------------------------|
+                | This account does not exist!  |                        |
+                | Retry?                        | Press: y               |
+                | Register new account?         | Press: any key         |
+                |--------------------------------------------------------|
+                """);
+                if (MainController.yes()) continue;
+                break;
+            }
+            return user;
+        }
+        return null;
+    }
+
+    //Logout user, update user stats in database if he/she has seen/created posts
+    public boolean logout(User user) {
+        System.out.println("""
+        |--------------------------------------------------------|
+        | Do you want to log out? (y/n)                          |
+        |--------------------------------------------------------|
+        """);
+        if (MainController.yes()) {
+            if (user.hasUpdated()) this.updateUser(user);
+            System.out.println("Bye bye " + user.getName() + "!");
+            return true;
+        }
+        return false;
     }
 
     /**
      * Update user values in database.
-     * @param user User object.
+     * @param user types.User object.
      */
     public void updateUser(User user) {
         try {
