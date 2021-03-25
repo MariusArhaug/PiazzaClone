@@ -21,6 +21,6 @@ public class Folder {
 
     public String toString() {
         return "| " + this.name + " ID: " + this.folderID +
-                (this.superFolderID != 0 ?  " Parent folder: " + this.superFolderID + " |" : " |") ;
+                (this.superFolderID != 0 ?  " Parent folder ID: " + this.superFolderID : "") ;
     }
 }

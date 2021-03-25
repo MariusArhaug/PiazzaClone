@@ -164,12 +164,18 @@ public class CreatePost extends DBConnect {
     public int selectFolder(int courseID) {
         Scanner in = new Scanner(System.in);
         List<Folder> courseFolders = this.view.viewCourseFolders(courseID);
-        System.out.println(courseFolders
+        System.out.println("""
+                |---------------------------------------------------------|
+                | Folders:                                                |""");
+        System.out.println( courseFolders
                 .stream()
                 .map(Folder::toString)
-                .collect(Collectors.joining(" ")));
+                .collect(Collectors.joining(" \n")));
         while (true) {
-            System.out.println("Select a folder: [" + courseFolders
+            System.out.println("""
+                    |---------------------------------------------------------|"
+                    | Select a folder ID:                                     |""");
+            System.out.println("| [" + courseFolders
                     .stream()
                     .map(e -> Integer.toString(e.getFolderID()))
                     .collect(Collectors.joining(", ")) + "]");

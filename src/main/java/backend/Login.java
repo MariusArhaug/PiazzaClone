@@ -28,13 +28,12 @@ public class Login extends DBConnect {
                     "FROM users" +
                     "   WHERE email = (?) AND password = (?)";
             this.regStatement = conn.prepareStatement(SQLQuery);
-
             this.regStatement.setString(1, email);
-            this.regStatement.setString(2, Register.hashPassword(password));
+            this.regStatement.setString(2, password);
             ResultSet rs = this.regStatement.executeQuery();
             if (rs.next()) {
                 int userID = rs.getInt("userID");
-                String[] strings = {
+                String[] userInfo = {
                         rs.getString("name"),
                         rs.getString("email"),
                         rs.getString("password"),
@@ -46,7 +45,7 @@ public class Login extends DBConnect {
                         rs.getInt("postsLiked")
 
                 };
-                return new User(userID, strings, isInstructor, postCounts);
+                return new User(userID, userInfo, isInstructor, postCounts);
             }
         } catch(Exception e) {
            e.printStackTrace();
@@ -61,18 +60,22 @@ public class Login extends DBConnect {
     public User loginUser() {
         while (true) {
             Scanner in = new Scanner(System.in);
-            System.out.println("| It appears that you're not logged in, please log in.    |");
-            System.out.println("|------------------------Login----------------------------|");
+            System.out.println("""
+            |---------------------------------------------------------|
+            | It appears that you're not logged in, please log in.    |
+            | To register: | Enter blank both times.                  |
+            |------------------------Login----------------------------|
+            """);
             System.out.println("| Email: ");
             String email = in.nextLine();
             System.out.println("| Password: ");
-            String password = in.nextLine();
+            String password = Register.hashPassword(in.nextLine());
             User user = this.getUser(email, password);
             if (user == null) {
                 System.out.println("""
                 |--------------------------------------------------------|
                 | This account does not exist!  |                        |
-                | Retry?                        | Press: y               |
+                | Retry to log in               | Press: y               |
                 | Register new account?         | Press: any key         |
                 |--------------------------------------------------------|
                 """);

@@ -1,5 +1,8 @@
 package types;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * types.Course class that lets us store different data about a course.
  */
@@ -34,4 +37,10 @@ public class Course {
         return this.name + " : " + this.term;
     }
 
+    public static void printCourses(List<Course> courses) {
+        System.out.println(
+                courses.stream()
+                        .map(e -> "| " + e.getName() + "    ID: " + e.getCourseID())
+                        .collect(Collectors.joining(" \n")) + " \n");
+    }
 }

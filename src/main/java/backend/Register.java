@@ -72,7 +72,15 @@ public class Register extends DBConnect {
                 continue;
             }
             User user = this.insertUser(name, email, password, isInstructor);
-            if (user == null) {System.out.println("An error has occurred! Please try again!"); continue;}
+            if (user == null) {
+                System.out.println("""
+                |---------------------------------------------------------|
+                | There already exists an user with that email!           |
+                | Please try again!                                       |
+                |---------------------------------------------------------|
+                """);
+                continue;
+            }
             return user;
         }
     }
@@ -88,10 +96,8 @@ public class Register extends DBConnect {
     private User insertUser(String name, String email, String password, boolean isInstructor) {
         User existingUser = this.login.getUser(email, password);
 
-        if (existingUser != null) {
-            System.out.println("This user already exists, please choose another email");
-            return null;
-        }
+        if (existingUser != null) return null; //there exists already a user in database with email and password
+
         try {
             String SQL = "INSERT INTO users (name, email, password, isInstructor) " +
                     "VALUES ((?), (?), (?), (?))";

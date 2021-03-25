@@ -34,7 +34,7 @@ public class MainController {
         System.out.println("|-------------------Welcome to Piazza---------------------| \n");
         this.user = this.login.loginUser();
         if (this.user == null) this.user = this.register.registerUser();
-        System.out.println("| Success! Welcome " +  this.user.getName() + "! \n");
+        System.out.println("--- Success! Welcome " +  this.user.getName() + "! ------- \n");
         this.chooseCourse();
         System.out.println("|---------------| Welcome to: " + this.course + " |--------------| \n");
         while (true) {
@@ -48,12 +48,10 @@ public class MainController {
     private void chooseCourse() {
         Scanner in = new Scanner(System.in);
         List<Course> courses = this.view.viewCourses();
-        System.out.println("All available courses on Piazza: ");
-        System.out.println(courses
-                .stream()
-                .map(e -> e.getName() + " ID: " + e.getCourseID())
-                .collect(Collectors.joining(" ")) + "\n"
-        );
+        System.out.println("""
+                |--------------------------------------------------------|
+                | All available courses :                                |""");
+        Course.printCourses(courses);
         //See a users courses that he is registered for.
         List<Course> registeredCourses = this.view.viewRegisteredCourses(this.user.getUserID());
 
@@ -62,18 +60,20 @@ public class MainController {
             return;
         }
 
-        System.out.println("All registered courses: ");
-        System.out.println(registeredCourses
-                .stream()
-                .map(e -> e.getName() + " ID: " + e.getCourseID())
-                .collect(Collectors.joining(" "))
-        );
+        System.out.println("""
+                |--------------------------------------------------------|
+                | All registered courses :                               |""");
+        Course.printCourses(registeredCourses);
         while (true) {
             //Make sure that user selects right courseID (only courses that he is registered for)
-            System.out.println("Select a courseID: [" + registeredCourses
+            System.out.println("""
+                    |--------------------------------------------------------|
+                    | Select a course ID:                                    |""");
+            System.out.println("| [" + registeredCourses
                     .stream()
                     .map(e -> Integer.toString(e.getCourseID()))
-                    .collect(Collectors.joining(", ")) + "]");
+                    .collect(Collectors.joining(", ")) + "] \n" +
+                    "|--------------------------------------------------------|");
             int courseID = Integer.parseInt(in.nextLine());
             if (registeredCourses.stream().anyMatch(e -> e.getCourseID() == courseID)) {
                 this.course = createPost.selectCourse(courseID);
@@ -98,7 +98,7 @@ public class MainController {
         | Look for a post inside a folder? | Press: 2            |
         | Select/reply to a post?          | Press: 3            | 
         | Search for a post?               | Press: 4            |   
-        | For none press enter.            |                     |   
+        | To continue to next actions.     | Press: any key      |   
         |--------------------------------------------------------|
         """);
         String action = new Scanner(System.in).nextLine();
@@ -118,7 +118,7 @@ public class MainController {
         | View user statistics?:          | Press 0              |
         | Create folders for this course? | Press 1              |
         | Invite students to this course? | Press 2              |
-        | For none press enter.           |                      |   
+        | To continue to next actions.    | Press: any key       |   
         |--------------------------------------------------------|
         """);
         String action = new Scanner(System.in).nextLine();

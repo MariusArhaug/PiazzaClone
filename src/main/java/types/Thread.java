@@ -33,6 +33,7 @@ public class Thread {
     public String toString() {
         return  "|----------------------|" + "\n" +
                 "| Thread nr: " + this.threadID + "\n" +
+                "| " + this.type +  "\n" +
                 "|----------------------|" + "\n" +
                 "|-----Resolved--(" + (this.isResolved ? "yes)" : "no)-") + "--| \n";
     }

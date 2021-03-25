@@ -51,7 +51,7 @@ public class ReplyPost extends DBConnect {
         }
         Thread thread = this.selectThread(postID, user.isInstructor());
         if (thread == null) return;
-        this.newReply(thread.getThreadID(), user);
+        this.newReply(thread.getThreadID(), thread.getType(), user);
     }
 
 
@@ -73,13 +73,12 @@ public class ReplyPost extends DBConnect {
      * @param threadID ID of the thread the reply belongs to
      * @param user ID of the user who created the reply.
      */
-    public void newReply(int threadID, User user) {
-        //Only users can select that they want their reply be anonymous
+    public void newReply(int threadID, String threadType, User user) {
         Scanner in = new Scanner(System.in);
         System.out.println("Your reply: ");
         String content = in.nextLine();
         Reply reply;
-        if (user.isInstructor()) {
+        if (user.isInstructor()) {      //Only users can select that they want their reply be anonymous
             reply = this.insertReply(threadID, user, content, false);
         } else {
             System.out.println("Anonymous? (y/n)");
@@ -87,6 +86,7 @@ public class ReplyPost extends DBConnect {
         }
         user.increasePostsViewed();
         user.increasePostsCreated();
+        System.out.println("You created a new " + threadType + " !");
         System.out.println("Your reply: ");
         System.out.println(reply);
     }
@@ -182,16 +182,15 @@ public class ReplyPost extends DBConnect {
 
         //If we have no threads, the reply becomes a Instructor/Student answer
         //Here would also color the post if we used a GUI and not a TUI
-        if (threads.isEmpty()) {
-            String type = (isInstructor ? "Instructor" : "Student") + " answer";
-            System.out.println("You created a new " + type + "!");
-            return this.newThread(postID, type);
-        }
+        if (threads.isEmpty()) return this.newThread(postID, (isInstructor ? "Instructor" : "Student") + " answer");
 
         this.printThreads(threads);
         System.out.println("""
         |--------------------------------------------------------|
         | Select a discussion nr you want to reply to.           |
+        | (Can't be Student/Instructor answer directly,          |   
+        | start new discussion                                   |
+        |                                                        |
         | Start a new discussion        | Press: 0               |  
         | If you don't want to reply    | Press -1               |
         |--------------------------------------------------------|
@@ -199,22 +198,17 @@ public class ReplyPost extends DBConnect {
         while (true) {
             int threadID = Integer.parseInt(in.nextLine());
 
-            if (threads.stream().anyMatch(e -> e.getThreadID() == threadID )) {
+            if (threads.stream().filter(e -> e.getType().equals("Discussion"))
+                    .anyMatch(e -> e.getThreadID() == threadID )) {
                 return threads
                     .stream()
                     .filter(e -> e.getThreadID() == threadID)
                     .collect(Collectors.toList())
                     .get(0);
             }
-            if (threadID == 0) {
-                System.out.println("You started a new discussion");
-                return this.newThread(postID, "Discussion");
+            if (threadID == 0) return this.newThread(postID, "Discussion");
+            if (threadID == -1) return null;
 
-            }
-            if (threadID == -1) {
-                System.out.println("No reply created!");
-                return null;
-            }
             System.out.println("You must select a valid thread nr! ");
         }
     }
@@ -226,7 +220,6 @@ public class ReplyPost extends DBConnect {
     private void printThreads(List<Thread> threads) {
         System.out.println("Threads: " + threads
         .stream()
-        .filter(e -> e.getType().equals("Discussion"))
         .map(e -> e.toString() + this.view.viewRepliesInThread(e.getThreadID())
                 .stream()
                 .map(a ->  a
